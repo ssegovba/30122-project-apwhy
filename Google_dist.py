@@ -58,8 +58,8 @@ def get_time_distance(origin, destination):
     url = f"https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins={origin}&destinations={destination}&key={API_KEY}"
     response = requests.get(url)
     data = response.json()
-    time = data['rows'][0]['elements'][0]['duration']['text']
-    distance = data['rows'][0]['elements'][0]['distance']['text']
+    time = data['rows'][0]['elements'][0]['duration']['value']
+    distance = data['rows'][0]['elements'][0]['distance']['value']
     return time, distance
 
 def update_travel_data(destination = 'Central Business District, Chicago'):
