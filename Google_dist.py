@@ -3,11 +3,13 @@ import random
 import shapely.geometry as geometry
 import pandas as pd
 import requests
+from random import randint
+from time import sleep
 
 API_KEY = "INSERT API KEY HERE"
-zipcode_path = "INSERT PATH TO SHAPEFILE HERE"
+ZIPCODE_PATH = "INSERT PATH TO SHAPEFILE HERE"
 
-def define_origin_coor(zipcode_path, num_origin):
+def define_origin_coor(num_origin):
     '''
     Opens zipcode shapefile, generates num_origin random coordinates as origin
 
@@ -20,15 +22,14 @@ def define_origin_coor(zipcode_path, num_origin):
     '''
 
     # Open geojson shapefile
-    zipcode = gpd.read_file(zipcode_loc)
+    zipcodes = gpd.read_file(ZIPCODE_PATH)
 
     # Instantiate Pandas DF to store data
     points_df = pd.DataFrame(columns=['latitude', 'longitude', 'zipcode'])
 
     # Loop through each zipcode and generate n. random coordinates representing origin
-    for i, zipcode in zipcodes.iterrows():
-        points = []
-        for j in range(num_origin):
+    for _, zipcode in zipcodes.iterrows():
+        for _ in range(num_origin):
             point = geometry.Point(random.uniform(zipcode.geometry.bounds[0], 
                                                   zipcode.geometry.bounds[2]),
                                 random.uniform(zipcode.geometry.bounds[1], 
@@ -38,6 +39,8 @@ def define_origin_coor(zipcode_path, num_origin):
                                               'longitude': point.x, 
                                               'zipcode': zipcode.zip}, 
                                               ignore_index=True)
+    
+    return points_df
 
 
 def get_time_distance(origin, destination):
@@ -62,7 +65,7 @@ def get_time_distance(origin, destination):
     distance = data['rows'][0]['elements'][0]['distance']['value']
     return time, distance
 
-def update_travel_data(destination = 'Central Business District, Chicago'):
+def update_travel_data(destination, num_origin):
     '''
     Updates each observation in pandas df for destination (CBD)
 
@@ -72,6 +75,8 @@ def update_travel_data(destination = 'Central Business District, Chicago'):
     Function:
     Appends travel data (time_to_cbd, distance_to_cbd) into the Pandas dataframe
     ''' 
+    points_df = define_origin_coor(num_origin)
+
     points_df['time_to_CBD'] = None
     points_df['distance_to_CBD'] = None
 
@@ -80,6 +85,7 @@ def update_travel_data(destination = 'Central Business District, Chicago'):
         time, distance = get_time_distance(origin, destination)
         points_df.at[i, 'time_to_CBD'] = time
         points_df.at[i, 'distance_to_CBD'] = distance
+        sleep(randint(1,4))
 
 
 ##The following section is meant to be deleted
@@ -127,6 +133,6 @@ json_file = {
   "status": "OK",
 }
 
-time = json_file['rows'][0]['elements'][0]['duration']['text']
-distance = json_file['rows'][0]['elements'][0]['distance']['text']
+time = json_file['rows'][0]['elements'][0]['duration']['value']
+distance = json_file['rows'][0]['elements'][0]['distance']['value']
 print(time, distance)
