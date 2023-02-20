@@ -1,4 +1,4 @@
-# make initial data that we can structure visualiztions on
+# make initial data that we can structure visualizations on
 import pandas as pd
 import numpy as np
 
