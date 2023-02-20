@@ -12,7 +12,7 @@ def make_dummy_data():
     df = pd.DataFrame(np.random.randint(0, 100, size=(NUM_ROWS, 4)), columns=['x1','x2','x3','x4'])
     
     # Columns we know we'll have
-    df['zipcode'] = np.array([{'60601', '60602', '60603', '60604',
+    df['zipcode'] = np.array(['60601', '60602', '60603', '60604',
                                '60605', '60606', '60607', '60608',
                                '60609', '60610', '60611', '60612',
                                '60613', '60614', '60615', '60616',
@@ -26,7 +26,7 @@ def make_dummy_data():
                                '60647', '60649', '60651', '60652',
                                '60653', '60654', '60655', '60656',
                                '60657', '60659', '60660', '60661',
-                               '60666', '60707', '60827'}])
+                               '60666', '60707', '60827'])
 
     df['num_evictions'] = np.random.randint(0,10000,size=(NUM_ROWS, 1))
     df['disparity_index'] = np.random.rand(NUM_ROWS, )
