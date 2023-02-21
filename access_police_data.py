@@ -7,7 +7,7 @@
 import pandas as pd
 from sodapy import Socrata
 
-def pull_2022_crime_data():
+def pull_2019_crime_data():
     '''
     Retrieves 2022 crime data from Chicago Data Portal
 
@@ -36,13 +36,11 @@ def pull_2022_crime_data():
     # dictionaries by sodapy.
     # results = client.get("ijzp-q8t2", limit=2000)
 
-    data_2022 = client.get("ijzp-q8t2", select = '*', where = 'Year = 2022', limit = 1000000)
+    data_2019 = client.get("ijzp-q8t2", select = '*', where = 'Year = 2019', limit = 1000000)
 
     # Convert to pandas DataFrame
-    results_df = pd.DataFrame.from_records(data_2022)
-
-    # if we want to convert to csv
-    # results_df.to_csv('Chicago_2022_crime.csv')
+    results_df = pd.DataFrame.from_records(data_2019)
 
     return results_df
+    #return results_df.to_csv('Chicago_2019_crime.csv')
 
