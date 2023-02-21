@@ -7,13 +7,13 @@
 import pandas as pd
 from sodapy import Socrata
 
-def pull_2019_crime_data():
+def pull_crime_data(year):
     '''
-    Retrieves 2022 crime data from Chicago Data Portal
+    Retrieves crime data from Chicago Data Portal for a specific year.
 
-    Inputs: none
+    Inputs (int): Year for which the data wants to be pulled
 
-    Returns (dataframe or csv): Chicago crime data, one crime per row
+    Returns: None, writes the pulled data as a csv file in the provided path.
     '''
 
     APP_TOKEN = 'iVwn5D2iqqAipgU9FpV1K1nq7'
@@ -36,11 +36,8 @@ def pull_2019_crime_data():
     # dictionaries by sodapy.
     # results = client.get("ijzp-q8t2", limit=2000)
 
-    data_2019 = client.get("ijzp-q8t2", select = '*', where = 'Year = 2019', limit = 1000000)
+    data = client.get("ijzp-q8t2", select = '*', where = 'Year = ' + str(year), limit = 1000000)
 
-    # Convert to pandas DataFrame
-    results_df = pd.DataFrame.from_records(data_2019)
-
-    return results_df
-    #return results_df.to_csv('Chicago_2019_crime.csv')
-
+    # Convert to pd DataFrame an exports the file
+    results_df = pd.DataFrame.from_records(data)
+    results_df.to_csv('data_bases/crime_data.csv')

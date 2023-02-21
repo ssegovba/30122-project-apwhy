@@ -12,7 +12,8 @@ def pull_acs_data():
 
     Input: None
 
-    Returns (pd.DataFrame): zip code level demographics for Illinois
+    Returns: None, writes the pulled data as a csv file in the provided path at
+            zip code level demographics for Illinois.
     """
 
     acs_var = censusdata.download('acs5/subject', 2019, censusdata.censusgeo(
@@ -43,4 +44,4 @@ def pull_acs_data():
                         'pop_white', 'pop_black', 'pop_native',
                         'pop_asian', 'pop_latino', 'zip_code']
 
-    return acs_var
+    acs_var.to_csv('data_bases/acs_data.csv')
