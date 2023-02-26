@@ -87,52 +87,7 @@ def update_travel_data(destination, num_origin):
         points_df.at[i, 'distance_to_CBD'] = distance
         sleep(randint(1,4))
 
+    points_df.to_csv("./google_distancematrix.csv")
 
-##The following section is meant to be deleted
-#For reference, Google's DistanceMatrix API returns data in the following format:
-#I used this to construct get_time_distance().
-#Ref: https://developers.google.com/maps/documentation/distance-matrix/distance-matrix
-json_file = {
-  "destination_addresses":
-    ["San Francisco, Californie, États-Unis", "Victoria, BC, Canada"],
-  "origin_addresses":
-    ["Vancouver, BC, Canada", "Seattle, Washington, États-Unis"],
-  "rows":
-    [
-      {
-        "elements":
-          [
-            {
-              "distance": { "text": "1 712 km", "value": 1711765 },
-              "duration": { "text": "3 jours 16 heures", "value": 318119 },
-              "status": "OK",
-            },
-            {
-              "distance": { "text": "140 km", "value": 139695 },
-              "duration": { "text": "6 heures 49 minutes", "value": 24567 },
-              "status": "OK",
-            },
-          ],
-      },
-      {
-        "elements":
-          [
-            {
-              "distance": { "text": "1 452 km", "value": 1451704 },
-              "duration": { "text": "3 jours 2 heures", "value": 266680 },
-              "status": "OK",
-            },
-            {
-              "distance": { "text": "146 km", "value": 146500 },
-              "duration": { "text": "2 heures 53 minutes", "value": 10374 },
-              "status": "OK",
-            },
-          ],
-      },
-    ],
-  "status": "OK",
-}
 
-time = json_file['rows'][0]['elements'][0]['duration']['value']
-distance = json_file['rows'][0]['elements'][0]['distance']['value']
-print(time, distance)
+
