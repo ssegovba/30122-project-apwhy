@@ -30,15 +30,18 @@ def define_origin_coor(num_origin):
     # Loop through each zipcode and generate n. random coordinates representing origin
     for _, zipcode in zipcodes.iterrows():
         for _ in range(num_origin):
-            point = geometry.Point(random.uniform(zipcode.geometry.bounds[0], 
-                                                  zipcode.geometry.bounds[2]),
-                                random.uniform(zipcode.geometry.bounds[1], 
-                                               zipcode.geometry.bounds[3]))
-            if zipcode.geometry.contains(point):
-                points_df = points_df.append({'latitude': point.y, 
-                                              'longitude': point.x, 
-                                              'zipcode': zipcode.zip}, 
-                                              ignore_index=True)
+            # If random point is not within zipcode boundary, randomize again
+            point = None
+            while not point:
+                point = geometry.Point(random.uniform(zipcode.geometry.bounds[0], 
+                                                        zipcode.geometry.bounds[2]),
+                                    random.uniform(zipcode.geometry.bounds[1], 
+                                                    zipcode.geometry.bounds[3]))
+                if zipcode.geometry.contains(point):
+                    points_df = points_df.append({'latitude': point.y, 
+                                                    'longitude': point.x, 
+                                                    'zipcode': zipcode.zip}, 
+                                                    ignore_index=True)
     
     return points_df
 
@@ -61,8 +64,15 @@ def get_time_distance(origin, destination):
     url = f"https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins={origin}&destinations={destination}&key={API_KEY}"
     response = requests.get(url)
     data = response.json()
-    time = data['rows'][0]['elements'][0]['duration']['value']
-    distance = data['rows'][0]['elements'][0]['distance']['value']
+
+    #Key Error Handling: If API returns nothing, 
+    #record time, distance as 0 representing missing values
+    try:
+        time = data['rows'][0]['elements'][0]['duration']['value']
+        distance = data['rows'][0]['elements'][0]['distance']['value']
+    except KeyError:
+        time, distance = 0, 0
+
     return time, distance
 
 def update_travel_data(destination, num_origin):
@@ -82,7 +92,15 @@ def update_travel_data(destination, num_origin):
 
     for i, row in points_df.iterrows():
         origin = f"{row['latitude']},{row['longitude']}"
-        time, distance = get_time_distance(origin, destination)
+        while True:
+            # Added try-except to handle errors when requesting
+            try:
+                time, distance = get_time_distance(origin, destination)
+                break
+            except ValueError:
+                points_df = define_origin_coor(num_origin)
+                row = points_df.iloc[i]
+                origin = f"{row['latitude']},{row['longitude']}"
         points_df.at[i, 'time_to_CBD'] = time
         points_df.at[i, 'distance_to_CBD'] = distance
         sleep(randint(1,4))
