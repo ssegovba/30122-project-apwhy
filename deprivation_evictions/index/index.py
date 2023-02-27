@@ -15,7 +15,7 @@ thresholds = {
 #    Criteria is to censor data for non-deprived neighborhoods
 k = 2
 
-# 3) path to clean data
+# 3) path to clean data (currently synthetic as we are still merging our dataset)
 cleaned_data = ""
 
 class MultiDimensionalDeprivation:
