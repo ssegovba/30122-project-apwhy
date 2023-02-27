@@ -79,7 +79,7 @@ class MultiDimensionalDeprivation:
 
     def power_gap(self, n):
         '''
-        Computed power gap - Matrix g^alpha (n = alpha).
+        Computes power gap - Matrix g^alpha (n = alpha).
         This matrix is used by policymakers to target the most deprived 
         neighborhoods first
 
@@ -88,3 +88,37 @@ class MultiDimensionalDeprivation:
         '''
         mat_g2 = self.normalized_gap() ** n
         return mat_g2
+
+    def deprivation_share(self):
+        '''
+        Computes M0 (Called Adjusted Headcount ratio in the AF method)
+        The ratio is a metrics of structural deprivation for those 
+        included in cutoff k.
+
+        Input: Matrix Y from fn:deprivation_matrix()
+        Returns: A ratio. 
+        '''
+        mat_y = self.deprivation_matrix()
+        non_zero_rows = mat_y.any(axis=1)
+        num_non_zero_rows = non_zero_rows.sum()
+        denominator = num_non_zero_rows * mat_y.shape[1]
+        deprivation_share = mat_y.sum().sum() / denominator
+
+        return deprivation_share
+
+    def adj_deprivation_gap(self):
+        '''
+        Computes Matrix M1 (called Adjusted Poverty gap in AF method)
+        This matrix encodes averages matrix g1 to obtain the average gap 
+        (satisfies monotonicity)
+
+        Input: Matrix g1 from fn:normalized_gap()
+        Returns: A ratio.
+        '''
+        mat_g1 = self.normalized_gap()
+        non_zero_rows = mat_g1.any(axis=1)
+        num_non_zero_rows = non_zero_rows.sum()
+        denominator = num_non_zero_rows * mat_g1.shape[1]
+        deprivation_share = mat_g1.sum().sum() / denominator
+
+        return deprivation_share
