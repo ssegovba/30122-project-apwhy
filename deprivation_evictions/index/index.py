@@ -16,7 +16,7 @@ thresholds = {
 k = 2
 
 # 3) path to clean data (currently synthetic as we are still merging our dataset)
-cleaned_data = ""
+cleaned_data = "../data_bases/raw_data/Synthetic Data.csv"
 
 class MultiDimensionalDeprivation:
     def __init__(self, k, cleaned_data, thresholds):
@@ -36,7 +36,7 @@ class MultiDimensionalDeprivation:
         cleaned_data    : takes in cleaned processed data
         k               : fixed cutoff in AF method
         
-        Returns wellbeing scores as a pandas dataframe
+        Returns deprivation scores as a pandas dataframe
         '''
         #Generate binary matrix y
         mat_y = pd.DataFrame(index=self.data.index, columns=self.indicators)
@@ -55,7 +55,7 @@ class MultiDimensionalDeprivation:
         '''
         Computes the normalized gap - Matrix g^1 in AF method
         Represents the extent of deprivation in distance relative to thresholds
-        Some prefer this matrix as this satisfies monotonicity
+        Some prefer this matrix as it satisfies monotonicity
 
         Input: Matrix Y from fn:deprivation_matrix()
         Returns: Matrix g^1(k) as a pandas dataframe
@@ -67,7 +67,7 @@ class MultiDimensionalDeprivation:
         for ind in self.indicators:
             mat_g1[ind] = (self.data[ind] - self.thresholds[ind]) / self.thresholds[ind]
         
-        # Replace NaN values and negative values with 0 
+        # Replace null and negative values with 0 
         mat_g1 = mat_g1.fillna(0)
         mat_g1[mat_g1 < 0] = 0
         
