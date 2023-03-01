@@ -1,4 +1,7 @@
 import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
+from factor_analyzer import FactorAnalyzer
 
 ### To run, we have to instantiate the following global parameters###
 
