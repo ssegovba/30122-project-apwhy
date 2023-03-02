@@ -1,4 +1,7 @@
 import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
+from factor_analyzer import FactorAnalyzer
 
 ### To run, we have to instantiate the following global parameters###
 
@@ -122,3 +125,59 @@ class MultiDimensionalDeprivation:
         deprivation_share = mat_g1.sum().sum() / denominator
 
         return deprivation_share
+
+
+    def pca_weights(self, matrix, n_comp=6, rotate_fn='oblimin'):
+        '''
+        Performs PCA to express deprivation weights in terms of their 
+        var-covar matrix
+
+        Input: Any Matrix g0, g1, ..., gn (depending on objective of analysis)
+        n_comp equivalent to num of dimensions (default=6, when index expands, 
+        this parameter is set based on scree plot and factor loadings)
+        rotate_fn - function for factor rotations (generally: oblimin or varimax)
+        Returns: PCA or Factor weights
+        '''
+
+        #PCA
+        pca = PCA()
+        pca.fit(matrix)
+
+        #Generate scree plot
+        plt.plot(range(1, len(pca.explained_variance_)+1),
+        pca.explained_variance_, 'ro-', linewidth=2)
+        plt.title('Scree Plot')
+        plt.xlabel('Principal Component')
+        plt.ylabel('Eigenvalues')
+        plt.show()
+
+        # Factor analysis - Express factors as rotations
+        fa = FactorAnalyzer(n_factors=n_comp, rotation= rotate_fn)
+        fa.fit(matrix)
+        print(pd.DataFrame(fa.get_communalities(),index=matrix.columns,columns=['Communalities']))
+
+        # Express weights as factor loadings
+        weights = fa.loadings_
+        weights = pd.DataFrame(weights, columns=self.indicators)
+
+        # normalize each row to sum to 1 
+        # (For principal components, not needed for factor loadings)
+        #### weights = weights.abs().div(weights.abs().sum(axis=1), axis=0)
+        
+        return weights
+
+    def weighted_deprivation_inx(self, matrix, weights):
+        '''
+        Computes weighted deprivation index for each zipcode
+
+        Inputs: 
+            matrix  - g0, g1, ..., gn 
+            weights - a dataframe containing vectors of weights for 
+                      each dimension
+        Returns: Weighted deprivation index score for each zipcode 
+        '''
+        # Aggregate weights
+        weights = weights.sum(axis=0)
+
+        wgt_dpt_idx = matrix.dot(weights)
+        return wgt_dpt_idx
