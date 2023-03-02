@@ -67,12 +67,14 @@ def create_legend(colors):
     """
     data = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
 
+    legend_colors = colors[6:] + colors[3:6] + colors[:3]
+
     fig = px.imshow(
         data,
         labels=dict(x = "Deprivation Index", y = "Evictions"),
         x=["< 0.33", "< 0.66", "< 1.0"],
-        y=["Low", "Medium", "High"],
-        color_continuous_scale=colors,
+        y=["High", "Medium", "Low"],
+        color_continuous_scale=legend_colors,
                                 )
 
     fig.update_layout(coloraxis_showscale=False)
@@ -111,7 +113,7 @@ def bivariate_map(df, colors, geojson, x, y):
         center = {"lat":41.8781, "lon":-87.6298},
         color='biv_bins',
         color_continuous_scale=colors,
-        opacity=0.7,
+        opacity=0.8,
         zoom=9,
         hover_data=["num_evictions", "disparity_index"],
     )
