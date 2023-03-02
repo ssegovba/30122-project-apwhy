@@ -52,7 +52,7 @@ app.layout = dbc.Container(
             dbc.Col(
                 html.H1("Neighborhood Deprivation and Evictions in Chicago", className="text-center mb-4"),
             )
-        ),
+        ), 
         dbc.Row(
             dbc.Col(
                 html.H1("Andrew Dunn, Gregory Ho, Santiago Segovia, Stephania Tello Zamudio",
@@ -65,10 +65,14 @@ app.layout = dbc.Container(
                         This project looks to understand what neighborhood characteristics are associated with eviction in \
                         the city of Chicago. This will allow us to construct an index to measure neighborhood deprivation, \
                         using a similar approach as the Multi-dimensional poverty index.",
-                            style={"font-size": 14, "text-align": 'left', 'marginTop': 15})
+                            style={"font-size": 16, "text-align": 'left', 'marginTop': 15})
                 
             )
     
+        ),
+        dbc.Row(html.H3("How does neighborhood deprivation relate to evictions?",
+                        style={'marginBottom': 10, 'marginTop': 20}),
+
         ),
         dbc.Row(
             [
@@ -89,7 +93,8 @@ app.layout = dbc.Container(
                 #               style={'width': '100%', 'marginBottom': 25, 'marginTop': 25}),
                 # )
                 html.Div(children=[
-                    html.H1(children='Comparison of Zip Code Attributes to City Average', className="text-center mb-4"),
+                    html.H3(children='Comparison of Zip Code Attributes to City Average',
+                            style={'marginBottom': 10, 'marginTop': 20}),
                     zip_dropdown,
                     dcc.Graph(id="radar_graph", figure = radar_fig,)
                 ])
@@ -97,7 +102,8 @@ app.layout = dbc.Container(
         ),
         dbc.Row(
             dbc.Col(
-                html.H1("Comparison of Evictions to Key Deprivation Indicators", className="text-center mb-4"),
+                html.H3("Comparison of Evictions to Key Deprivation Indicators",
+                        style={'marginBottom': 10, 'marginTop': 20}),
             )
         ),
         dbc.Row(
