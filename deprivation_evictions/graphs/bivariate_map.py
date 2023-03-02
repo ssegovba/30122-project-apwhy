@@ -1,6 +1,4 @@
 import numpy as np
-import pandas as pd
-import plotly.graph_objs as go
 import plotly.express as px
 
 #Code adapted from Bivariate choropleth map using Plotly 
@@ -56,7 +54,7 @@ def prepare_df(df, x, y):
 
 
 #Creating the color square legend 
-def create_legend(fig, colors):
+def create_legend(colors):
     """
     Creates color square legend that contains 9-color matrix
         for bivariate map
@@ -65,83 +63,21 @@ def create_legend(fig, colors):
         fig (Figure object): map of Chicago
         colors (lst): list with 9 colors for legend
 
-    Returns: (Figure object) map with added legend
+    Returns: (Figure object) 9-color legend matrix
     """
-    #Setting the width and height of each color box
-    width = 0.04
-    height = 0.04 / 0.8 #box height / ratio of height to width
+    data = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
 
-    #Calculating the coordinates of each rectangle in legend
-    legend_colors = colors[:]
-    legend_colors.reverse
+    fig = px.imshow(
+        data,
+        labels=dict(x = "Deprivation Index", y = "Evictions"),
+        x=["< 0.33", "< 0.66", "< 1.0"],
+        y=["Low", "Medium", "High"],
+        color_continuous_scale=colors,
+                                )
 
-    coordinates = []
-
-    for row in range(1, 4):
-        for col in range(1, 4):
-            coordinates.append({
-                'x0': round(1 - (col - 1)*width, 4),
-                'y0': round(1 - (row - 1)*height, 4),
-                'x1': round(1 - col*width, 4),
-                'y1': round(1 - row*height, 4)
-            })
+    fig.update_layout(coloraxis_showscale=False)
     
-    #Creating the boxes
-    for i, value in enumerate(coordinates):
-        # Add rectangle
-        fig.add_shape(go.layout.Shape(
-            type='rect',
-            fillcolor=legend_colors[i],
-            line=dict(
-                color='#f8f8f8',
-                width=0,
-            ),
-            xref='paper',
-            yref='paper',
-            xanchor='right',
-            yanchor='top',
-            x0=coordinates[i]['x0'],
-            y0=coordinates[i]['y0'],
-            x1=coordinates[i]['x1'],
-            y1=coordinates[i]['y1'],
-        ))
-
-        #Text for x variable: Deprivation Index
-        fig.add_annotation(
-            xref='paper',
-            yref='paper',
-            xanchor='left',
-            yanchor='top',
-            x=coordinates[8]['x1'],
-            y=coordinates[8]['y1'],
-            showarrow=False,
-            text="Deprivation Index" + ' 🠒',
-            font=dict(
-                color='#333',
-                size=9,
-            ),
-            borderpad=0,
-        )
-
-        #Text for y variable: Evictions
-        fig.add_annotation(
-            xref='paper',
-            yref='paper',
-            xanchor='right',
-            yanchor='bottom',
-            x=coordinates[8]['x1'],
-            y=coordinates[8]['y1'],
-            showarrow=False,
-            text="Evictions" + ' 🠒',
-            font=dict(
-                color='#333',
-                size=9,
-            ),
-            textangle=270, #so it is vertical
-            borderpad=0,
-        )
-
-        return fig
+    return fig
 
 
 #Creating bivariate map
@@ -165,7 +101,6 @@ def bivariate_map(df, colors, geojson, x, y):
     assert 9 == len(colors), "List of colors has to contain 9 elements"
 
     final_df = prepare_df(df, x, y)
-    final_df['biv_bins'] = final_df['biv_bins'].apply(str)
 
     fig = px.choropleth_mapbox(
         final_df,
@@ -175,71 +110,19 @@ def bivariate_map(df, colors, geojson, x, y):
         mapbox_style = 'carto-positron',
         center = {"lat":41.8781, "lon":-87.6298},
         color='biv_bins',
-        color_discrete_map={
-            '0': colors[0],
-            '1': colors[1],
-            '2': colors[2],
-            '3': colors[3],
-            '4': colors[4],
-            '5': colors[5],
-            '6': colors[6],
-            '7': colors[7],
-            '8': colors[8],
-        },
+        color_continuous_scale=colors,
         opacity=0.7,
         zoom=9,
         hover_data=["num_evictions", "disparity_index"],
     )
 
-    # fig = px.choropleth_mapbox(
-    #     final_df,
-    #     featureidkey="properties.zip",
-    #     geojson=geojson,
-    #     locations='zipcode',
-    #     color='biv_bins',
-    #     mapbox_style = 'carto-positron',
-    #     center = {"lat":41.8781, "lon":-87.6298},
-    #     color_discrete_map={
-    #         '0': colors[0],
-    #         '1': colors[1],
-    #         '2': colors[2],
-    #         '3': colors[3],
-    #         '4': colors[4],
-    #         '5': colors[5],
-    #         '6': colors[6],
-    #         '7': colors[7],
-    #         '8': colors[8],
-    #     },
-    #     opacity=0.7,
-    #     zoom=9,
-    # )
-
-    # fig = go.Figure(go.Choroplethmapbox(
-    #     geojson=geojson,
-    #     locations=final_df['zipcode'],
-    #     z=final_df['biv_bins'],
-    #     marker_line_width=.5,
-    #     colorscale=[
-    #         [0/8, colors[0]],
-    #         [1/8, colors[1]],
-    #         [2/8, colors[2]],
-    #         [3/8, colors[3]],
-    #         [4/8, colors[4]],
-    #         [5/8, colors[5]],
-    #         [6/8, colors[6]],
-    #         [7/8, colors[7]],
-    #         [8/8, colors[8]],
-    #     ],
-    #     featureidkey="properties.zip",
-    # ))
-
     fig.update_geos(fitbounds='locations', visible=False)
 
-    fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+    fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0},
+                      coloraxis_showscale=False)
 
-    #fig.update_traces(marker_line_width=0)
-    #Adding the legend
-    #fig = create_legend(fig, colors)
+    #fig.update_coloraxes() --- to change style of coloraxes
+
 
     return fig
 
