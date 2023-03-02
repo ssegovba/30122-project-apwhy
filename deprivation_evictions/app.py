@@ -7,7 +7,7 @@ import plotly.express as px
 
 #while waiting for final data
 from graphs.make_dummy_viz_data import make_dummy_data
-from graphs.bivariate_map import bivariate_map
+from graphs.bivariate_map import bivariate_map, create_legend
 
 # Boundaries by Zip code - Chicago (Geojson)
 boundaries_url = "https://data.cityofchicago.org/api/geospatial/gdcf-axmw?method=export&format=GeoJSON"
@@ -15,15 +15,16 @@ boundaries_url = "https://data.cityofchicago.org/api/geospatial/gdcf-axmw?method
 with urlopen(boundaries_url) as response:
     zipcodes = json.load(response)
 
-app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = Dash(__name__, external_stylesheets=[dbc.themes.FLATLY])
 
 # ----------------- BIVARIATE MAP ---------------------
 
-colors = ['#73ae80', '#5a9178', '#2a5a5b',
+colors = ['#e8e8e8', '#b5c0da', '#6c83b5',
           '#b8d6be', '#90b2b3', '#567994',
-          '#e8e8e8', '#b5c0da', '#6c83b5']
+          '#73ae80', '#5a9178', '#2a5a5b']
 
 map_fig = bivariate_map(make_dummy_data(), colors, zipcodes, 'disparity_index', 'num_evictions')
+map_legend = create_legend(colors)
 
 
 # ----------------- APP LAYOUT ------------------------
@@ -55,14 +56,22 @@ app.layout = dbc.Container(
     
         ),
         dbc.Row(
+            [
             dbc.Col(
                 dcc.Graph(id="map", figure=map_fig,
                           style={'width': '100%', 'marginBottom': 25, 'marginTop': 25}),
+                width={"size":9}
+            ),
+            dbc.Col(
+                dcc.Graph(id="legend", figure=map_legend, style={'width': '100%'}),
+                width={"size":3}
             )
+            ]
         ),
     ],
     className="mt-4",
 )
+
 
 # ---------------- APP INTERACTION ---------------------
 
