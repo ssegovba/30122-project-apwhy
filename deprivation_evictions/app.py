@@ -33,11 +33,13 @@ colors = ['#73ae80', '#5a9178', '#2a5a5b',
 map_fig = bivariate_map(df, colors, zipcodes, 'disparity_index', 'num_evictions')
 
 # ----------------- SCATTER PLOT ---------------------
+indicator_dropdown = dcc.Dropdown(options = ['x1', 'x2', 'x3', 'x4'], value = 'x1')
+
 scatter_fig = make_scatter_plot(df, 'disparity_index', 'num_evictions')
 
 # ----------------- RADAR PLOT ---------------------
 
-zip_dropdown = dcc.Dropdown(options=df['zipcode'].unique(), value='60601')
+zip_dropdown = dcc.Dropdown(options = df['zipcode'].unique(), value = '60601')
 
 radar_fig = create_radar_graph(df, '60615', 'zipcode')
 
@@ -54,10 +56,8 @@ app.layout = dbc.Container(
         dbc.Row(
             dbc.Col(
                 html.H1("Andrew Dunn, Gregory Ho, Santiago Segovia, Stephania Tello Zamudio",
-                            style={"font-style": "italic", "font-size": 16, "text-align": 'center'})
-                
+                            style={"font-style": "italic", "font-size": 16, "text-align": 'center'})           
             )
-    
         ),
         dbc.Row(
             dbc.Col(
@@ -82,36 +82,53 @@ app.layout = dbc.Container(
                 #               style={'width': '100%', 'marginBottom': 25, 'marginTop': 25}),
                 # )
                 html.Div(children=[
-                    html.H1(children='Comparison of Neighborhood Attributes to City Average'),
+                    html.H1(children='Comparison of Zip Code Attributes to City Average', className="text-center mb-4"),
                     zip_dropdown,
-                    dcc.Graph(id="radar_graph", figure=radar_fig,)
+                    dcc.Graph(id="radar_graph", figure = radar_fig,)
                 ])
             )
         ),
         dbc.Row(
             dbc.Col(
-                # dcc.Graph(id="scatter_graph", figure=scatter_fig),
-                #           style={'width': '100%', 'marginBottom': 25, 'marginTop': 25}),
-                dcc.Graph(id="scatter_graph", figure=scatter_fig),
+                html.H1("Comparison of Evictions to Key Deprivation Indicators", className="text-center mb-4"),
             )
         ),
+        dbc.Row(
+            dbc.Col(
+                # dcc.Graph(id="scatter_graph", figure=scatter_fig),
 
-
-
+                html.Div(children=[
+                    indicator_dropdown,
+                    dcc.Graph(id="scatter_graph", figure = scatter_fig,)
+                ])
+            )
+        ),
     ],
     className="mt-4",
 )
 
 # ---------------- APP INTERACTION ---------------------
 
+# Dropdown for radar graph
 # used this as general guide https://www.justintodata.com/python-interactive-dashboard-with-plotly-dash-tutorial/
 @app.callback(
     Output(component_id = 'radar_graph', component_property = 'figure'),
     Input(component_id = zip_dropdown, component_property = 'value')
 )
 def update_graph(selected_zip):
-    updated_radar_fig = create_radar_graph(df, selected_zip, 'zipcode')
-    return updated_radar_fig
+    # updated_radar_fig = create_radar_graph(df, selected_zip, 'zipcode')
+    # return updated_radar_fig
+    return create_radar_graph(df, selected_zip, 'zipcode')
+
+# Dropdown for scatter plot
+@app.callback(
+    Output(component_id = 'scatter_graph', component_property = 'figure'),
+    Input(component_id = indicator_dropdown, component_property = 'value')
+)
+def update_graph(selected_x_var):
+    # updated_scatter_plot = make_scatter_plot(df, selected_x_var, 'num_evictions')
+    # return updated_scatter_plot
+    return make_scatter_plot(df, selected_x_var, 'num_evictions')
 
 
 if __name__ == '__main__':

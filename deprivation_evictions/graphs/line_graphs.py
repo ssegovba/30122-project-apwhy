@@ -20,11 +20,13 @@ import plotly.express as px
 # y_var = disparity_index
 
 def make_scatter_plot(df, x_var, y_var):
-    fig = px.scatter(df, x=x_var, 
-                        y=y_var, 
-                        trendline="ols", 
-                        title='Comparison of Deprivation Index to Evictions')
-    fig.show()
+    fig = px.scatter(df, x = x_var, 
+                        y = y_var, 
+                        trendline = "ols", 
+                        #title='Comparison of Deprivation Index to Evictions',
+                        hover_name = "zipcode", 
+                        hover_data = [x_var, y_var])
+    #fig.show()
 
 
     # get the regression equation
@@ -36,8 +38,3 @@ def make_scatter_plot(df, x_var, y_var):
     df['num_evictions'].corr(df['disparity_index'])
 
     return fig
-
-# app = Dash(__name__)
-
-# if __name__ == "__main__":
-#     app.run_server(debug=True)
