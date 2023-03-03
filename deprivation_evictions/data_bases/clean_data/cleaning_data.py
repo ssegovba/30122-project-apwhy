@@ -8,24 +8,23 @@ import numpy as np
 import geopy
 import json
 
+DATA_PATH = "../raw_data/"
+
 def clean_db(lat_lon_dict = True):
     """
     Creates a clean database with all the relevant variables from the different
     data sources employed.
 
     Input:
-        lat_lon_dict (boolean): True if there is already a dictionary containing
-            a mapping for zipcodes and lat-lon coordinates. False to generate that
-            dictionary.
+        lat_lon_dict (boolean): True (default) if there is already a dictionary 
+            containing a mapping for zipcodes and lat-lon coordinates.
+            False to generate that dictionary using helper function.
 
     Output:
-        - A .csv file that is stored in the 'data_path'
-        - if lat_lon_dict a json file containing a coordinates dictionary
+        - A .csv file that is stored in the current folder
     """
 
     # Defining initial arguments:
-    data_path = "../clean_data/"
-
     zip = {'zip_code': ['60601', '60602', '60603', '60604',
                         '60605', '60606', '60607', '60608',
                         '60609', '60610', '60611', '60612',
@@ -40,14 +39,12 @@ def clean_db(lat_lon_dict = True):
                         '60647', '60649', '60651', '60652',
                         '60653', '60654', '60655', '60656',
                         '60657', '60659', '60660', '60661',
-                        '60707', '60827']} #Removed 60666
+                        '60707', '60827']} #Removed 60666 (O'Hare)
     zipcodes = pd.DataFrame(data = zip)
 
-    # Zillow Data:
-    # The data is filtered by state and year (2019). We focus only on zipcodes from 
-    # the city of Chicago: 
-
-    rent_data = pd.read_csv("zillow_data.csv")
+    # ZILLOW DATA:
+    # Filter by year (2019) and zip codes of Chicago:
+    rent_data = pd.read_csv(DATA_PATH + "zillow_data.csv")
     rent_data = rent_data[rent_data["State"]=="IL"]
     date_cols = rent_data.filter(like='20', axis=1)
     rent_data = rent_data.melt(id_vars=["RegionName","State"],value_vars=date_cols,
@@ -57,20 +54,20 @@ def clean_db(lat_lon_dict = True):
     rent_data["Date"] = pd.to_datetime(rent_data["Date"], format = "%Y-%m-%d")
     rent_data = rent_data[rent_data["Date"].dt.year == 2019]
 
-    #We calculate the mean rent in a zipcode (problem: some zipcodes don't have data):
+    # Calculate the mean rent in a zipcode:
     rent_data = rent_data[rent_data["zip_code"].isin(zipcodes["zip_code"])]
     mean_rent = rent_data.groupby("zip_code")["RentPrice"].mean().reset_index()
 
-    # ACS Data:
-    # Select zipcodes from Chicago
-    acs_data = pd.read_csv("acs_data.csv")
+    # ACS DATA:
+    # Filter by zipcodes from Chicago:
+    acs_data = pd.read_csv(DATA_PATH + "acs_data.csv")
     acs_data = acs_data.drop(columns=["Unnamed: 0"])
     acs_data['zip_code'] = acs_data['zip_code'].astype("string")
     acs_data = acs_data[acs_data["zip_code"].isin(zipcodes["zip_code"])]
 
-    # Evictions Data:
+    # EVICTIONS DATA:
     # Filter by year and select specific columns:
-    evic_data = pd.read_csv("eviction_data.csv")
+    evic_data = pd.read_csv(DATA_PATH + "eviction_data.csv")
     evic_data = evic_data[evic_data["filing_year"] == 2019]
     cols_to_keep = ["filing_year","tract","eviction_filings_completed","back_rent_0",
                     "back_rent_1_to_999","back_rent_1000_to_2499","back_rent_2500_to_4999",
@@ -78,12 +75,12 @@ def clean_db(lat_lon_dict = True):
     evic_data = evic_data[cols_to_keep]
 
     # Load censustract and zipcode boundary to find zipcodes:
-    zipcodes_gdf = gpd.read_file('bound_zip_codes.geojson')
-    census_tracts_gdf = gpd.read_file('bound_census_tracts.geojson')
+    zipcodes_gdf = gpd.read_file(DATA_PATH + 'bound_zip_codes.geojson')
+    census_tracts_gdf = gpd.read_file(DATA_PATH + 'bound_census_tracts.geojson')
     merged_gdf = gpd.sjoin(census_tracts_gdf, zipcodes_gdf, how='inner', predicate='intersects')
     merged_gdf = merged_gdf.rename(columns={"zip":"zip_code"})
 
-    # Convert the 'Geoid10' column to str to ensure join match
+    # Convert the 'Geoid10' column to str to ensure join match:
     census_tracts_gdf['Geoid10'] = census_tracts_gdf['geoid10'].astype(str)
     evic_data['tract'] = evic_data['tract'].astype(str)
     evic_data = evic_data.rename(columns={'tract': 'geoid10'})
@@ -99,9 +96,9 @@ def clean_db(lat_lon_dict = True):
     mean_back_rent = evic_data.groupby("zip_code")["back_rent_median"].mean().reset_index()
     num_evics = pd.merge(num_evics,mean_back_rent)
 
-    # Crime data:
+    # CRIME DATA:
     # Define types of crimes that are going to be aggregated by zip code:
-    crime_data = pd.read_csv("crime_data.csv")
+    crime_data = pd.read_csv(DATA_PATH + "crime_data.csv")
     violent_crime = ["ASSAULT","BATTERY","ROBBERY","CRIM SEXUAL ASSAULT",
                     "CRIMINAL SEXUAL ASSAULT","SEX OFFENSE","INTIMIDATION","HOMICIDE",
                     "KIDNAPPING","HUMAN TRAFFICKING"]
@@ -117,7 +114,7 @@ def clean_db(lat_lon_dict = True):
 
     #Map coordinates to zip code:
     if lat_lon_dict:
-        with open("lat_lon_dict.txt", "r") as fp:
+        with open(DATA_PATH + "lat_lon_dict.txt", "r") as fp:
             lat_lon_dict = json.load(fp)
     else:
         mapping_coord_zip(crime_data)
@@ -127,11 +124,11 @@ def clean_db(lat_lon_dict = True):
     crime_data = crime_data[crime_data["zip_code"].isin(zipcodes["zip_code"])]
     crime_data = crime_data[~crime_data["zip_code"].isnull()]
 
-    #Aggregation by zip_code:
+    #Aggregation by zip code:
     cols_aggregate = ["crime","violent_crime","non_offensive_crime"]
     num_crimes = crime_data.groupby("zip_code")[cols_aggregate].count().reset_index()
 
-    #Merging the databases:
+    #MERGING DATA:
     merged_db = pd.merge(acs_data,mean_rent,on="zip_code",how="outer")
     merged_db = pd.merge(merged_db,num_evics,on="zip_code",how="outer")
     merged_db = pd.merge(merged_db,num_crimes,on="zip_code",how="outer")
@@ -141,7 +138,7 @@ def clean_db(lat_lon_dict = True):
     mean_rent["RentPrice"] = mean_rent["RentPrice"].fillna(median_price)
     
     #Exporting the database:
-    merged_db.to_csv(data_path + "clean_database.csv",index=False)
+    merged_db.to_csv("clean_database.csv",index=False)
 
 def mapping_coord_zip(df):
     """
@@ -177,7 +174,7 @@ def mapping_coord_zip(df):
         if s == 0:
             lat_lon_dict = {}
         else:
-            with open("lat_lon_dict_" + str(s-1) +"_.txt", "r") as fp:
+            with open(DATA_PATH + "lat_lon_dict_" + str(s-1) +".txt", "r") as fp:
                 lat_lon_dict = json.load(fp)
 
         lower_idx = num_rows*s
@@ -193,11 +190,11 @@ def mapping_coord_zip(df):
             if key not in lat_lon_dict:
                 lat_lon_dict[key] = get_zipcode(geolocator,row["latitude"],row["longitude"])
         
-        with open("lat_lon_dict_" + str(s) +"_.txt", "w") as fp:
+        with open("lat_lon_dict_" + str(s) +".txt", "w") as fp:
             json.dump(lat_lon_dict, fp)
     
     #Creating the final dictionary:
-    with open("lat_lon_dict_" + str(num_splits) +"_.txt", "r") as fp:
+    with open("lat_lon_dict_" + str(num_splits) +".txt", "r") as fp:
                 lat_lon_dict = json.load(fp)
     with open("lat_lon_dict.txt", "w") as fp:
             json.dump(lat_lon_dict, fp)
