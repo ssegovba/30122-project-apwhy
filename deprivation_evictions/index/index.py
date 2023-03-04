@@ -208,7 +208,12 @@ class MultiDimensionalDeprivation:
         weights = weights.sum(axis=0)
 
         wgt_dpt_idx = matrix.dot(weights)
-        output_df = pd.DataFrame({'wdi': wgt_dpt_idx}, index=data.index)
+
+        # Additional scaling (min-max) for visualization
+        wdi_scaled = (wgt_dpt_idx - wgt_dpt_idx.min()) / (wgt_dpt_idx.max() - wgt_dpt_idx.min())
+
+        output_df = pd.DataFrame({'wdi': wgt_dpt_idx,
+                                  'wdi_scaled': wdi_scaled}, index=data.index)
         return output_df
 
     def extend_data(self,output_path):
