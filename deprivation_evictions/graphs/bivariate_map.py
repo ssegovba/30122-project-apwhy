@@ -110,7 +110,7 @@ def bivariate_map(df, colors, geojson, x, y):
         geojson=geojson,
         locations='zipcode',
         mapbox_style = 'carto-positron',
-        center = {"lat":41.8781, "lon":-87.6298},
+        center = {"lat": 41.8, "lon": -87.75},
         color='biv_bins',
         color_continuous_scale=colors,
         opacity=0.8,

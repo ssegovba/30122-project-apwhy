@@ -7,19 +7,22 @@ from factor_analyzer import FactorAnalyzer
 
 # 1) thresholds represent pre-defined cutoffs obtained from our literature review
 thresholds = {
-'type I crime': 10,
-'type II crime': 30,
-'rental affordability': 0.3,
-'house price affordability': 4,
-'time to cbd': 30,
-'distance to cbd': 5000}
+'violent_crime': 10,
+'crime': 30,
+'non_offensive_crime': 30,
+'RTI_ratio': 0.3,
+'house price affordability': 4, #zillow?
+'time to cbd': 30, #cleaned_database.csv should have this as well
+'distance to cbd': 5000 #cleaned_database.csv should have this as well
+} 
 
 # 2) specify fixed cutoff as specified in AF method. 
 #    Criteria is to censor data for non-deprived neighborhoods
-k = 2
+#    k=0 because we have low count of sub-indicators
+k = 0
 
 # 3) path to clean data (currently synthetic as we are still merging our dataset)
-cleaned_data = "../data_bases/raw_data/Synthetic Data.csv"
+cleaned_data = "../data_bases/clean_data/clean_database.csv"
 
 class MultiDimensionalDeprivation:
     def __init__(self, k, cleaned_data, thresholds):
@@ -30,6 +33,23 @@ class MultiDimensionalDeprivation:
         self.data = pd.read_csv(cleaned_data)
         self.thresholds = thresholds
         self.indicators = list(thresholds.keys())
+
+    def compute_ratios(self):
+        '''
+        This function takes in cleaned data and performs some row operations to 
+        compute intermediate values
+        Inputs:
+        cleaned_data    : takes in cleaned processed data
+
+        Returns:
+        extended_data   : processed data in the form of a pandas dataframe
+        '''
+        cleaned_data = self.data
+
+        # Compute intermediate values
+        cleaned_data["RTI_ratio"] = cleaned_data["RentPrice"]/(cleaned_data["hh_median_income")]/12)
+        # [KIV]
+        return cleaned_data
         
     def deprivation_matrix(self):
         '''
