@@ -5,14 +5,12 @@ from dash import Dash, dcc, html, Input, Output
 import dash_bootstrap_components as dbc
 import plotly.express as px
 
-#while waiting for final data
-from graphs.make_dummy_viz_data import make_dummy_data
-# temp data
-df = make_dummy_data()
+# Load the processed data
+df = pd.read_csv('data_bases/final_data/processed_data.csv')
 
-# import the graphs
+# Import the graphs
 from graphs.bivariate_map import bivariate_map, create_legend
-from graphs.line_graphs import make_scatter_plot
+from graphs.scatter_plot import make_scatter_plot
 from graphs.radar_graph import create_radar_graph
 
 # Boundaries by Zip code - Chicago (Geojson)
@@ -29,14 +27,24 @@ colors = ['#e8e8e8', '#b5c0da', '#6c83b5',
           '#b8d6be', '#90b2b3', '#567994',
           '#73ae80', '#5a9178', '#2a5a5b']
 
-map_fig = bivariate_map(df, colors, zipcodes, 'disparity_index', 'num_evictions')
+map_fig = bivariate_map(df, colors, zipcodes, 'wdi', 'eviction_filings_completed_scaled')
 map_legend = create_legend(colors)
 
 
 # ----------------- SCATTER PLOT ---------------------
-indicator_dropdown = dcc.Dropdown(options = ['x1', 'x2', 'x3', 'x4'], value = 'x1')
+# need to create diplay names?
+#  categories = ['Violent Crime','All Crime','Non-violent Crime', 'Rent-to-income Ratio', 
+#                 'Time to Loop', 'Distance to Loop']
 
-scatter_fig = make_scatter_plot(df, 'disparity_index', 'num_evictions')
+indicator_dropdown = dcc.Dropdown(options = ['violent_crime_y', 
+                                             'crime_y', 
+                                             'non_offensive_crime_y', 
+                                             'RTI_ratio_y',
+                                             'time_to_CBD_y',
+                                             'distance_to_CBD_y',
+                                             ], value = 'violent_crime_y')
+
+scatter_fig = make_scatter_plot(df, 'violent_crime_y', 'eviction_filings_completed_scaled')
 
 # ----------------- RADAR PLOT ---------------------
 
@@ -140,12 +148,12 @@ app.layout = dbc.Container(
 
 def general_map(ind_evic):
     
-    df = make_dummy_data()
+    #df = make_dummy_data()
 
     if ind_evic == 'Evictions per capita':
-        var = 'num_evictions'
+        var = 'eviction_filings_completed_scaled'
     else:
-        var = 'disparity_index'
+        var = 'wdi'
     
     fig = px.choropleth_mapbox(
         df,
@@ -188,7 +196,7 @@ def update_graph(selected_zip):
 def update_graph(selected_x_var):
     # updated_scatter_plot = make_scatter_plot(df, selected_x_var, 'num_evictions')
     # return updated_scatter_plot
-    return make_scatter_plot(df, selected_x_var, 'num_evictions')
+    return make_scatter_plot(df, selected_x_var, 'eviction_filings_completed_scaled')
 
 
 if __name__ == '__main__':
