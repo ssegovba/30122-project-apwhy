@@ -92,7 +92,7 @@ def clean_db(lat_lon_dict = True):
     # Aggregate data by zipcode:
     back_rent_cols = list(filter(lambda x:'back_rent_' in x, list(evic_data.columns)))
     cols_aggregate = ["eviction_filings_completed"] + back_rent_cols[0:len(back_rent_cols)-1]
-    num_evics = evic_data.groupby("zip_code")[cols_aggregate].count().reset_index()
+    num_evics = evic_data.groupby("zip_code")[cols_aggregate].sum().reset_index()
     mean_back_rent = evic_data.groupby("zip_code")["back_rent_median"].mean().reset_index()
     num_evics = pd.merge(num_evics,mean_back_rent)
 
@@ -126,7 +126,7 @@ def clean_db(lat_lon_dict = True):
 
     #Aggregation by zip code:
     cols_aggregate = ["crime","violent_crime","non_offensive_crime"]
-    num_crimes = crime_data.groupby("zip_code")[cols_aggregate].count().reset_index()
+    num_crimes = crime_data.groupby("zip_code")[cols_aggregate].sum().reset_index()
 
     #MERGING DATA:
     merged_db = pd.merge(acs_data,mean_rent,on="zip_code",how="outer")
@@ -135,7 +135,7 @@ def clean_db(lat_lon_dict = True):
 
     #Some zipcodes don't have rent data, so the median rent price is assigned to them:
     median_price = mean_rent["RentPrice"].median()
-    mean_rent["RentPrice"] = mean_rent["RentPrice"].fillna(median_price)
+    merged_db["RentPrice"] = merged_db["RentPrice"].fillna(median_price)
     
     #Exporting the database:
     merged_db.to_csv("clean_database.csv",index=False)
