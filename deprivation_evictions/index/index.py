@@ -212,6 +212,9 @@ class MultiDimensionalDeprivation:
         return output_df
 
     def extend_data(self,output_path):
+        '''
+        This function updates the cleaned dataset with index and sub-index values
+        '''
         merged_data = self.compute_ratios()
         mat_g1 = self.normalized_gap()
         pca1 = self.pca_weights(mat_g1,6,"varimax")
