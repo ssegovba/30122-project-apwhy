@@ -44,7 +44,7 @@ indicator_dropdown = dcc.Dropdown(options = ['violent_crime_y',
                                              'distance_to_CBD_y',
                                              ], value = 'violent_crime_y')
 
-scatter_fig = make_scatter_plot(df, 'violent_crime_y', 'eviction_filings_completed_scaled')
+scatter_fig = make_scatter_plot(df, 'violent_crime_y')
 
 # ----------------- RADAR PLOT ---------------------
 
