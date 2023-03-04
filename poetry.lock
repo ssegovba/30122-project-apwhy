@@ -220,7 +220,6 @@ files = [
 ]
 
 [[package]]
-<<<<<<< HEAD
 name = "dash"
 version = "2.8.1"
 description = "A Python framework for building reactive web-apps. Developed by Plotly."
@@ -300,7 +299,6 @@ files = [
     {file = "dash_table-5.0.0-py3-none-any.whl", hash = "sha256:19036fa352bb1c11baf38068ec62d172f0515f73ca3276c79dee49b95ddc16c9"},
     {file = "dash_table-5.0.0.tar.gz", hash = "sha256:18624d693d4c8ef2ddec99a6f167593437a7ea0bf153aa20f318c170c5bc7308"},
 ]
-=======
 name = "distlib"
 version = "0.3.6"
 description = "Distribution utilities"
@@ -345,7 +343,6 @@ files = [
 [package.extras]
 docs = ["furo (>=2022.12.7)", "sphinx (>=5.3)", "sphinx-autodoc-typehints (>=1.19.5)"]
 testing = ["covdefaults (>=2.2.2)", "coverage (>=7.0.1)", "pytest (>=7.2)", "pytest-cov (>=4)", "pytest-timeout (>=2.1)"]
->>>>>>> af07b49fb27fd723e1a56e8c33675e44d023be13
 
 [[package]]
 name = "fiona"
