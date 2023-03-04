@@ -1,59 +1,65 @@
-#from make_dummy_viz_data import make_dummy_data
+# Creates a radar graph to compare kay variables of a zip code against the mean
+# Written by Andrew Dunn
+
 import pandas as pd
 from dash import Dash, dcc, html
 import plotly.express as px
 import plotly.graph_objects as go
 
-#df = make_dummy_data()
-
 def create_radar_graph(df, zip_code, zipcode_col_name):
 
-  # Reformat data for viz
-  df = df.set_index(zipcode_col_name)
+    # Reformat data for viz
+    df[zipcode_col_name].apply(str)
+    df = df.set_index(zipcode_col_name)
 
-  # Get the data in the right format
-  zip_dict = {}
+    # Get the data in the right format
+    zip_dict = {}
 
-  for index, rows in df.iterrows():
-      zip_dict[index] = [rows.x1, rows.x2, rows.x3, rows.x4]
+    for index, rows in df.iterrows():
+        zip_dict[index] = [rows.violent_crime_y, rows.crime_y, rows.non_offensive_crime_y, 
+                            rows.RTI_ratio_y, rows.time_to_CBD_y, rows.distance_to_CBD_y]
 
+    # update data categories upon final data
+    # Create display names for the fields of data
+    categories = ['Violent Crime','All Crime','Non-violent Crime', 'Rent-to-income Ratio', 
+                'Time to Loop', 'Distance to Loop']
 
-  # update data categories upon final data
-  # Create display names for the fields of data
-  categories = ['data field 1','data field 2','data field 3', 'data field 4']
+    fig = go.Figure()   
 
-  fig = go.Figure()
-
-  # Graph the city averages
-  df['x1':'x4'].mean(axis=0)
-
-  fig.add_trace(go.Scatterpolar(
-        r = [df['x1'].mean(axis=0), 
-              df['x2'].mean(axis=0), 
-              df['x3'].mean(axis=0), 
-              df['x4'].mean(axis=0)],
+    # Graph the city averages
+    fig.add_trace(go.Scatterpolar(
+        r = [df['violent_crime_y'].mean(axis=0), 
+                df['crime_y'].mean(axis=0), 
+                df['non_offensive_crime_y'].mean(axis=0), 
+                df['RTI_ratio_y'].mean(axis=0),
+                df['time_to_CBD_y'].mean(axis=0),
+                df['distance_to_CBD_y'].mean(axis=0)],
         theta = categories,
         fill = 'toself',
         name = 'City-wide mean'
-  ))
+    ))
 
-  # Create the graph for a specific zip code
-  fig.add_trace(go.Scatterpolar(
+    # Create the graph for a specific zip code
+    fig.add_trace(go.Scatterpolar(
         r = zip_dict[zip_code],
         theta = categories,
         fill = 'toself',
         name = zip_code
-  ))
+    ))
 
-  fig.update_layout(
-    polar=dict(
-      radialaxis=dict(
-        visible=True,
-        range=[df['x1'].min(axis=0), df['x1'].max(axis=0)]
-      )),
-    showlegend=False
-  )
+    # Get maximum value for the different axes
+    maxes = df[['violent_crime_y', 'crime_y', 'non_offensive_crime_y', 'RTI_ratio_y', 
+        'time_to_CBD_y', 'distance_to_CBD_y']].max(axis=1)
 
-  #fig.show()
+    fig.update_layout(
+        polar=dict(
+            radialaxis=dict(
+            visible=True,
+            range=[0, maxes.max]
+            )),
+        showlegend=False
+    )
 
-  return fig
+    #fig.show()
+
+    return fig
