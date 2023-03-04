@@ -115,7 +115,7 @@ def bivariate_map(df, colors, geojson, x, y):
         color_continuous_scale=colors,
         opacity=0.8,
         zoom=9,
-        hover_data=["num_evictions", "disparity_index"],
+        hover_data=["eviction_filings_completed_scaled", "wdi"],
     )
 
     fig.update_geos(fitbounds='locations', visible=False)

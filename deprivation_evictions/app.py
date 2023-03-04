@@ -23,34 +23,34 @@ app = Dash(__name__, external_stylesheets=[dbc.themes.FLATLY])
 
 # ----------------- BIVARIATE MAP ---------------------
 
-colors = ['#e8e8e8', '#b5c0da', '#6c83b5',
-          '#b8d6be', '#90b2b3', '#567994',
-          '#73ae80', '#5a9178', '#2a5a5b']
+colors = ['rgb(222, 224, 210)', 'rgb(189, 206, 181)', 'rgb(153, 189, 156)', 
+          'rgb(110, 173, 138)', 'rgb(65, 157, 129)', 'rgb(25, 137, 125)', 
+          'rgb(18, 116, 117)', 'rgb(28, 72, 93)', 'rgb(20, 29, 67)']
 
-map_fig = bivariate_map(df, colors, zipcodes, 'wdi', 'eviction_filings_completed_scaled')
+map_fig = bivariate_map(df, colors, zipcodes, 'wdi_scaled', 'eviction_filings_completed_scaled')
 map_legend = create_legend(colors)
-
 
 # ----------------- SCATTER PLOT ---------------------
 # need to create diplay names?
 #  categories = ['Violent Crime','All Crime','Non-violent Crime', 'Rent-to-income Ratio', 
 #                 'Time to Loop', 'Distance to Loop']
 
-indicator_dropdown = dcc.Dropdown(options = ['violent_crime_y', 
-                                             'crime_y', 
-                                             'non_offensive_crime_y', 
+indicator_dropdown = dcc.Dropdown(options = ['violent_crime_scaled_y', 
+                                             'crime_scaled_y', 
+                                             'non_offensive_crime_scaled_y', 
                                              'RTI_ratio_y',
                                              'time_to_CBD_y',
                                              'distance_to_CBD_y',
-                                             ], value = 'violent_crime_y')
+                                             ], value = 'violent_crime_scaled_y')
 
-scatter_fig = make_scatter_plot(df, 'violent_crime_y')
+scatter_fig = make_scatter_plot(df, 'violent_crime_scaled_y')
+
 
 # ----------------- RADAR PLOT ---------------------
 
 zip_dropdown = dcc.Dropdown(options = df['zipcode'].unique(), value = '60601')
 
-radar_fig = create_radar_graph(df, '60615', 'zipcode')
+radar_fig = create_radar_graph(df, 60615, 'zipcode')
 
 # ----------------- APP LAYOUT ------------------------
 
@@ -79,8 +79,8 @@ app.layout = dbc.Container(
     
         ),
         dbc.Row(dbc.RadioItems(id = 'ind_evic', 
-                               options = ["Evictions per capita", "Deprivation Index"],
-                               value = "Evictions per capita",
+                               options = ["Eviction rate", "Deprivation Index"],
+                               value = "Eviction rate",
                                inline = True)
         ),
         dbc.Row(
@@ -148,15 +148,15 @@ app.layout = dbc.Container(
 
 def general_map(ind_evic):
     
-    #df = make_dummy_data()
+    df_map = df 
 
     if ind_evic == 'Evictions per capita':
         var = 'eviction_filings_completed_scaled'
     else:
-        var = 'wdi'
+        var = 'wdi_scaled'
     
     fig = px.choropleth_mapbox(
-        df,
+        df_map,
         featureidkey="properties.zip",
         geojson=zipcodes,
         locations='zipcode',
@@ -164,10 +164,9 @@ def general_map(ind_evic):
         center = {"lat": 41.8, "lon": -87.75},
         color=var,
         color_continuous_scale=['#B8D6BE', '#839F89', '#D5FADD', '#005B5E'],
-        #color_continuous_scale=px.colors.sequential.tempo,
         opacity=0.8,
         zoom=9,
-        hover_data=[var],
+        hover_data={var: True},
     )
 
     fig.update_geos(fitbounds='locations', visible=False)
