@@ -32,7 +32,6 @@ colors = ['#e8e8e8', '#b5c0da', '#6c83b5',
 map_fig = bivariate_map(df, colors, zipcodes, 'disparity_index', 'num_evictions')
 map_legend = create_legend(colors)
 
-
 # ----------------- SCATTER PLOT ---------------------
 indicator_dropdown = dcc.Dropdown(options = ['x1', 'x2', 'x3', 'x4'], value = 'x1')
 
