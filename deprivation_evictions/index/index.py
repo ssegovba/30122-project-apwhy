@@ -7,19 +7,24 @@ from factor_analyzer import FactorAnalyzer
 
 # 1) thresholds represent pre-defined cutoffs obtained from our literature review
 thresholds = {
-'type I crime': 10,
-'type II crime': 30,
-'rental affordability': 0.3,
-'house price affordability': 4,
-'time to cbd': 30,
-'distance to cbd': 5000}
+'violent_crime': 1002,
+'crime': 3577,
+'non_offensive_crime':458,
+'RTI_ratio': 0.3,
+'time_to_CBD': 1200, #cleaned_database.csv should have this as well
+'distance_to_CBD': 14159 #cleaned_database.csv should have this as well
+}
+#'house price affordability': 4, #zillow?
 
 # 2) specify fixed cutoff as specified in AF method. 
 #    Criteria is to censor data for non-deprived neighborhoods
-k = 2
+#    k=0 because we have low count of sub-indicators
+k = 0
 
 # 3) path to clean data (currently synthetic as we are still merging our dataset)
-cleaned_data = "../data_bases/raw_data/Synthetic Data.csv"
+cleaned_data = "../data_bases/clean_data/clean_database.csv"
+transport_data = "../data_bases/raw_data/google_distancematrix.csv"
+output_path = "../data_bases/final_data/processed_data.csv"
 
 class MultiDimensionalDeprivation:
     def __init__(self, k, cleaned_data, thresholds):
@@ -30,6 +35,27 @@ class MultiDimensionalDeprivation:
         self.data = pd.read_csv(cleaned_data)
         self.thresholds = thresholds
         self.indicators = list(thresholds.keys())
+
+    def compute_ratios(self):
+        '''
+        This function takes in cleaned data and performs some row operations to 
+        compute intermediate values
+        Inputs:
+        cleaned_data    : takes in cleaned processed data
+
+        Returns:
+        extended_data   : processed data in the form of a pandas dataframe
+        '''
+        cleaned_data = self.data
+        travel_data = pd.read_csv(transport_data)
+        travel_data = travel_data.groupby('zipcode')[['time_to_CBD', 'distance_to_CBD']].mean()
+
+        # Compute intermediate values
+        cleaned_data["RTI_ratio"] = cleaned_data["RentPrice"]/(cleaned_data["hh_median_income"]/12)
+        # [KIV]
+        cleaned_data = cleaned_data.rename(columns={'zip_code': 'zipcode'})
+        merged_data = pd.merge(cleaned_data, travel_data, on='zipcode', how='inner')
+        return merged_data
         
     def deprivation_matrix(self):
         '''
@@ -41,16 +67,17 @@ class MultiDimensionalDeprivation:
         
         Returns deprivation scores as a pandas dataframe
         '''
+        merged_data = self.compute_ratios()
         #Generate binary matrix y
-        mat_y = pd.DataFrame(index=self.data.index, columns=self.indicators)
-        self.data['deprivation_share'] = 0
+        mat_y = pd.DataFrame(index=merged_data.index, columns=self.indicators)
+        merged_data['deprivation_share'] = 0
         for ind in self.indicators:
-            mat_y[ind] = (self.data[ind] >= self.thresholds[ind]).astype(int)
-            self.data['deprivation_share'] += mat_y[ind]
+            mat_y[ind] = (merged_data[ind] >= self.thresholds[ind]).astype(int)
+            merged_data['deprivation_share'] += mat_y[ind]
 
         # for all zipcodes that has less than k deprivations assign all elements to
         # be 0
-        mat_y[self.data['deprivation_share'] <= self.k] = 0
+        mat_y[merged_data['deprivation_share'] <= self.k] = 0
         
         return mat_y
 
@@ -63,12 +90,13 @@ class MultiDimensionalDeprivation:
         Input: Matrix Y from fn:deprivation_matrix()
         Returns: Matrix g^1(k) as a pandas dataframe
         '''
+        merged_data = self.compute_ratios()
         mat_y = self.deprivation_matrix()
         
         # Compute the normalized gap
-        mat_g1 = pd.DataFrame(index=self.data.index, columns=self.indicators)
+        mat_g1 = pd.DataFrame(index=merged_data.index, columns=self.indicators)
         for ind in self.indicators:
-            mat_g1[ind] = (self.data[ind] - self.thresholds[ind]) / self.thresholds[ind]
+            mat_g1[ind] = (merged_data[ind] - self.thresholds[ind]) / self.thresholds[ind]
         
         # Replace null and negative values with 0 
         mat_g1 = mat_g1.fillna(0)
@@ -180,4 +208,17 @@ class MultiDimensionalDeprivation:
         weights = weights.sum(axis=0)
 
         wgt_dpt_idx = matrix.dot(weights)
-        return wgt_dpt_idx
+        output_df = pd.DataFrame({'wdi': wgt_dpt_idx}, index=data.index)
+        return output_df
+
+    def extend_data(self,output_path):
+        merged_data = self.compute_ratios()
+        mat_g1 = self.normalized_gap()
+        pca1 = self.pca_weights(mat_g1,6,"varimax")
+        wdi = self.weighted_deprivation_inx(mat_g1, pca1)
+
+        merged_data1 = pd.merge(merged_data, mat_g1, left_index=True, right_index=True)
+        merged_data2 = pd.merge(merged_data1, wdi, left_index=True, right_index=True)
+
+        merged_data2.to_csv(output_path)
+        return merged_data2
