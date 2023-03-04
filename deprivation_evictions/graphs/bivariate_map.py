@@ -1,9 +1,11 @@
+# Creating the bivariate map for Deprivation and Evictions data
+# Written by: Stephania Tello Zamudio
+
 import numpy as np
 import plotly.express as px
 
 #Code adapted from Bivariate choropleth map using Plotly 
 # (https://www.kaggle.com/code/yotkadata/bivariate-choropleth-map-using-plotly)
-
 
 #Defining bins for Deprivation Index and Evictions data
 def set_interval_value(val, break1, break2):
@@ -71,7 +73,7 @@ def create_legend(colors):
 
     fig = px.imshow(
         data,
-        labels=dict(x = "Deprivation Index", y = "Evictions"),
+        labels=dict(x = "Deprivation Index", y = "Eviction rate"),
         x=["< 0.33", "< 0.66", "< 1.0"],
         y=["High", "Medium", "Low"],
         color_continuous_scale=legend_colors,
@@ -115,7 +117,8 @@ def bivariate_map(df, colors, geojson, x, y):
         color_continuous_scale=colors,
         opacity=0.8,
         zoom=9,
-        hover_data=["num_evictions", "disparity_index"],
+        hover_data={"eviction_filings_completed_scaled": True, "wdi_scaled": True,
+                    'biv_bins': False},
     )
 
     fig.update_geos(fitbounds='locations', visible=False)
