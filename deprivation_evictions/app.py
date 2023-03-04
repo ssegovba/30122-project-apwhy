@@ -43,13 +43,14 @@ indicator_dropdown = dcc.Dropdown(options = ['violent_crime_scaled_y',
                                              'distance_to_CBD_y',
                                              ], value = 'violent_crime_scaled_y')
 
-scatter_fig = make_scatter_plot(df, 'violent_crime_scaled_y', 'eviction_filings_completed_scaled')
+scatter_fig = make_scatter_plot(df, 'violent_crime_scaled_y')
+
 
 # ----------------- RADAR PLOT ---------------------
 
 zip_dropdown = dcc.Dropdown(options = df['zipcode'].unique(), value = '60601')
 
-radar_fig = create_radar_graph(df, '60615', 'zipcode')
+radar_fig = create_radar_graph(df, 60615, 'zipcode')
 
 # ----------------- APP LAYOUT ------------------------
 

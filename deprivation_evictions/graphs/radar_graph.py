@@ -7,8 +7,19 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 def create_radar_graph(df, zip_code, zipcode_col_name):
+    '''
+    Creates a plotly radar graph
 
-    # Reformat data for viz
+    Inputs:
+        df (pandas dataframe)
+        zip_code (int): the zip code to use in the graph
+        zipcode_col_name (str): the name of the relevant zip code col in the df
+    
+    Returns:
+        fig (plotly figure): the radar plot of a zip vs the average
+    '''
+
+    # Format zip code column correctly
     df[zipcode_col_name].apply(str)
     df = df.set_index(zipcode_col_name)
 
@@ -16,11 +27,10 @@ def create_radar_graph(df, zip_code, zipcode_col_name):
     zip_dict = {}
 
     for index, rows in df.iterrows():
-        zip_dict[index] = [rows.violent_crime_y, rows.crime_y, rows.non_offensive_crime_y, 
+        zip_dict[index] = [rows.violent_crime_scaled_y, rows.crime_scaled_y, rows.non_offensive_crime_scaled_y, 
                             rows.RTI_ratio_y, rows.time_to_CBD_y, rows.distance_to_CBD_y]
 
     # update data categories upon final data
-    # Create display names for the fields of data
     categories = ['Violent Crime','All Crime','Non-violent Crime', 'Rent-to-income Ratio', 
                 'Time to Loop', 'Distance to Loop']
 
@@ -28,9 +38,9 @@ def create_radar_graph(df, zip_code, zipcode_col_name):
 
     # Graph the city averages
     fig.add_trace(go.Scatterpolar(
-        r = [df['violent_crime_y'].mean(axis=0), 
-                df['crime_y'].mean(axis=0), 
-                df['non_offensive_crime_y'].mean(axis=0), 
+        r = [df['violent_crime_scaled_y'].mean(axis=0), 
+                df['crime_scaled_y'].mean(axis=0), 
+                df['non_offensive_crime_scaled_y'].mean(axis=0), 
                 df['RTI_ratio_y'].mean(axis=0),
                 df['time_to_CBD_y'].mean(axis=0),
                 df['distance_to_CBD_y'].mean(axis=0)],
@@ -48,9 +58,10 @@ def create_radar_graph(df, zip_code, zipcode_col_name):
     ))
 
     # Get maximum value for the different axes
-    maxes = df[['violent_crime_y', 'crime_y', 'non_offensive_crime_y', 'RTI_ratio_y', 
+    maxes = df[['violent_crime_scaled_y', 'crime_scaled_y', 'non_offensive_crime_scaled_y', 'RTI_ratio_y', 
         'time_to_CBD_y', 'distance_to_CBD_y']].max(axis=1)
 
+    # Add ranges to the graph
     fig.update_layout(
         polar=dict(
             radialaxis=dict(
@@ -59,7 +70,5 @@ def create_radar_graph(df, zip_code, zipcode_col_name):
             )),
         showlegend=False
     )
-
-    #fig.show()
 
     return fig
