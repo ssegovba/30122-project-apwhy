@@ -61,9 +61,9 @@ app.layout = dbc.Container(
         ),
         dbc.Row(
             dbc.Col(
-                html.H1("Evictions are one of the main consequences of the lack of affordable housing in the US. \
+                html.P("Evictions are one of the main consequences of the lack of affordable housing in the US. \
                         This project looks to understand what neighborhood characteristics are associated with eviction in \
-                        the city of Chicago. This will allow us to construct an index to measure neighborhood deprivation, \
+                        the city of Chicago. In order to do that, we construct an index to measure neighborhood deprivation, \
                         using a similar approach as the Multi-dimensional poverty index.",
                             style={"font-size": 16, "text-align": 'left', 'marginTop': 15})
                 
