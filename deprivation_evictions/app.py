@@ -70,8 +70,17 @@ app.layout = dbc.Container(
             )
     
         ),
+        dbc.Row(dbc.RadioItems(id = 'ind_evic', 
+                               options = ["Evictions per capita", "Deprivation Index"],
+                               value = "Evictions per capita",
+                               inline = True)
+        ),
+        dbc.Row(
+        dcc.Graph(id="gen_map", figure={},
+                  style={'width': '100%', 'marginBottom': 25, 'marginTop': 25})
+        ),
         dbc.Row(html.H3("How does neighborhood deprivation relate to evictions?",
-                        style={'marginBottom': 10, 'marginTop': 20}),
+                        style={'marginBottom': 10, 'marginTop': 10}),
 
         ),
         dbc.Row(
@@ -122,6 +131,43 @@ app.layout = dbc.Container(
 
 
 # ---------------- APP INTERACTION ---------------------
+
+# Dropdown for general map
+@app.callback(
+        Output(component_id = 'gen_map', component_property='figure'),
+        Input(component_id='ind_evic', component_property= 'value')
+)
+
+def general_map(ind_evic):
+    
+    df = make_dummy_data()
+
+    if ind_evic == 'Evictions per capita':
+        var = 'num_evictions'
+    else:
+        var = 'disparity_index'
+    
+    fig = px.choropleth_mapbox(
+        df,
+        featureidkey="properties.zip",
+        geojson=zipcodes,
+        locations='zipcode',
+        mapbox_style = 'carto-positron',
+        center = {"lat": 41.8, "lon": -87.75},
+        color=var,
+        color_continuous_scale=['#B8D6BE', '#839F89', '#D5FADD', '#005B5E'],
+        #color_continuous_scale=px.colors.sequential.tempo,
+        opacity=0.8,
+        zoom=9,
+        hover_data=[var],
+    )
+
+    fig.update_geos(fitbounds='locations', visible=False)
+
+    fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0},
+                      coloraxis_showscale=True)
+
+    return fig
 
 # Dropdown for radar graph
 # used this as general guide https://www.justintodata.com/python-interactive-dashboard-with-plotly-dash-tutorial/
