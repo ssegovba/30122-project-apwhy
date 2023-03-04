@@ -101,9 +101,14 @@ def clean_db(lat_lon_dict = True):
     crime_data = pd.read_csv(DATA_PATH + "crime_data.csv")
     violent_crime = ["ASSAULT","BATTERY","ROBBERY","CRIM SEXUAL ASSAULT",
                     "CRIMINAL SEXUAL ASSAULT","SEX OFFENSE","INTIMIDATION","HOMICIDE",
-                    "KIDNAPPING","HUMAN TRAFFICKING"]
+                    "KIDNAPPING","HUMAN TRAFFICKING","THEFT","ARSON","PROSTITUTION",
+                    "OFFENSE INVOLVING CHILDREN"]
     non_offensive = ["OTHER OFFENSE","NARCOTICS","WEAPONS VIOLATION","MOTOR VEHICLE THEFT",
-                    "LIQUOR LAW VIOLATION","GAMBLING"]
+                    "LIQUOR LAW VIOLATION","GAMBLING","DECEPTIVE PRACTICE","CRIMINAL DAMAGE",
+                    "CRIMINAL TRESPASS","BURGLARY","INTERFERENCE WITH PUBLIC OFFICER",
+                    "PUBLIC PEACE VIOLATION","CONCEALED CARRY LICENSE VIOLATION",
+                    "STALKING","OBSCENITY","NON-CRIMINAL","OTHER NARCOTIC VIOLATION",
+                    "PUBLIC INDECENCY"]
     cols_to_keep = ['id', 'date', 'primary_type','latitude','longitude']
     crime_data = crime_data[cols_to_keep]
     crime_data = crime_data[crime_data["latitude"].isna() == False] #2042 registers without coordinates
@@ -136,6 +141,13 @@ def clean_db(lat_lon_dict = True):
     #Some zipcodes don't have rent data, so the median rent price is assigned to them:
     median_price = mean_rent["RentPrice"].median()
     merged_db["RentPrice"] = merged_db["RentPrice"].fillna(median_price)
+
+    #Scale some variables by population:
+    cols_scale = ["eviction_filings_completed","crime","violent_crime",
+                  "non_offensive_crime"]
+    for c in cols_scale:
+        new_name = c + "_scaled"
+        merged_db[new_name] = merged_db[c].div(10000)
     
     #Exporting the database:
     merged_db.to_csv("clean_database.csv",index=False)
