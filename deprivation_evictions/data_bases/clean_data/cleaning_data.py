@@ -1,6 +1,4 @@
-# make sure to install these packages before running:
-# pip install pandas
-# pip install geopy
+# Code written by Santiago Segovia
 
 import pandas as pd
 import geopandas as gpd
@@ -42,6 +40,13 @@ def clean_db(lat_lon_dict = True):
                         '60707', '60827']} #Removed 60666 (O'Hare)
     zipcodes = pd.DataFrame(data = zip)
 
+    # ACS DATA:
+    # Filter by zipcodes from Chicago:
+    acs_data = pd.read_csv(DATA_PATH + "acs_data.csv")
+    acs_data = acs_data.drop(columns=["Unnamed: 0"])
+    acs_data['zip_code'] = acs_data['zip_code'].astype("string")
+    acs_data = acs_data[acs_data["zip_code"].isin(zipcodes["zip_code"])]
+
     # ZILLOW DATA:
     # Filter by year (2019) and zip codes of Chicago:
     rent_data = pd.read_csv(DATA_PATH + "zillow_data.csv")
@@ -57,13 +62,6 @@ def clean_db(lat_lon_dict = True):
     # Calculate the mean rent in a zipcode:
     rent_data = rent_data[rent_data["zip_code"].isin(zipcodes["zip_code"])]
     mean_rent = rent_data.groupby("zip_code")["RentPrice"].mean().reset_index()
-
-    # ACS DATA:
-    # Filter by zipcodes from Chicago:
-    acs_data = pd.read_csv(DATA_PATH + "acs_data.csv")
-    acs_data = acs_data.drop(columns=["Unnamed: 0"])
-    acs_data['zip_code'] = acs_data['zip_code'].astype("string")
-    acs_data = acs_data[acs_data["zip_code"].isin(zipcodes["zip_code"])]
 
     # EVICTIONS DATA:
     # Filter by year and select specific columns:
@@ -147,7 +145,7 @@ def clean_db(lat_lon_dict = True):
                   "non_offensive_crime"]
     for c in cols_scale:
         new_name = c + "_scaled"
-        merged_db[new_name] = merged_db[c].div(10000)
+        merged_db[new_name] = merged_db[c].div(merged_db["total_population"])
     
     #Exporting the database:
     merged_db.to_csv("clean_database.csv",index=False)
