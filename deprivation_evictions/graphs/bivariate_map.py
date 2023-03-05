@@ -79,7 +79,7 @@ def create_legend(colors):
     fig = px.imshow(
         data,
         labels=dict(x = "Deprivation Index", y = "Evictions per capita"),
-        x=["< 0.33", "< 0.66", "< 1.0"],
+        x=["Low", "Medium", "High"],
         y=["High", "Medium", "Low"],
         color_continuous_scale=legend_colors,
                                 )
