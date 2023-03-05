@@ -76,7 +76,6 @@ def create_radar_graph(df, zip_code, zipcode_col_name):
     fig.update_traces(opacity=0.5)
     fig.update_layout(
         autosize = False,
-        width = 800,
-        height = 800,)
+        height = 800)
 
     return fig

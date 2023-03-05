@@ -87,8 +87,8 @@ app.layout = dbc.Container(
                                inline = True)
         ),
         dbc.Row(
-        dcc.Graph(id="gen_map", figure=gen_map,
-                  style={'height': '700', 'width': '100%', 'marginBottom': 25, 'marginTop': 25})
+            dcc.Graph(id="gen_map", figure=gen_map,
+                    style={'height': '700', 'width': '100%', 'marginBottom': 25, 'marginTop': 25})
         ),
         dbc.Row(html.H3("How does neighborhood deprivation relate to evictions?",
                         style={'marginBottom': 10, 'marginTop': 10}),
@@ -111,6 +111,10 @@ app.layout = dbc.Container(
                 html.Div(children=[
                     html.H3(children='Comparison of Zip Code Attributes to City Average',
                             style={'marginBottom': 10, 'marginTop': 20}),
+                    html.P("Descriptive text of this graph - to be completed.",
+                            style={"font-size": 16, "text-align": 'left', 'marginTop': 15}),
+                    html.P("Also add something describing the drop-down.",
+                            style={"font-size": 16, "text-align": 'left', 'marginTop': 15}),
                     zip_dropdown,
                     dcc.Graph(id="radar_graph", figure = radar_fig,)
                 ])
@@ -124,10 +128,28 @@ app.layout = dbc.Container(
         ),
         dbc.Row(
             dbc.Col(
+                html.P("Descriptive text of this graph - to be completed.",
+                        style={"font-size": 16, "text-align": 'left', 'marginTop': 15}),
+            )
+        ),
+        dbc.Row(
+            dbc.Col(
+                html.P("Also add something describing the drop-down menu.",
+                        style={"font-size": 16, "text-align": 'left', 'marginTop': 15}),
+            )
+        ),
+        dbc.Row(
+            dbc.Col(
                 html.Div(children=[
                     indicator_dropdown,
                     dcc.Graph(id="scatter_graph", figure = scatter_fig,)
                 ])
+            )
+        ),
+        dbc.Row(
+            dbc.Col(
+                html.P("For more info, visit the methodology doc at this URL:",
+                        style={"font-size": 16, "text-align": 'left', 'marginTop': 15}),
             )
         ),
     ],
