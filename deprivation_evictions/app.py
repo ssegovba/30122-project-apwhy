@@ -32,15 +32,15 @@ map_fig = bivariate_map(df, colors, zipcodes, 'wdi_scaled', 'eviction_filings_co
 map_legend = create_legend(colors)
 
 # ----------------- SCATTER PLOT ---------------------
-indicator_dropdown = dcc.Dropdown(options = ['violent_crime_scaled_y', 
-                                             'crime_scaled_y', 
-                                             'non_offensive_crime_scaled_y', 
-                                             'RTI_ratio_y',
-                                             'time_to_CBD_y',
-                                             'distance_to_CBD_y',
-                                             ], value = 'violent_crime_scaled_y')
+indicator_dropdown = dcc.Dropdown(options = ['Violent Crime', 
+                                             'All Crime', 
+                                             'Non-Violent Crime', 
+                                             'Rent-to-Income Ratio',
+                                             'Time to the Loop',
+                                             'Distance to the Loop',
+                                             ], value = 'Violent Crime')
 
-scatter_fig = make_scatter_plot(df, 'violent_crime_scaled_y')
+scatter_fig = make_scatter_plot(df, 'Violent Crime')
 
 
 # ----------------- RADAR PLOT ---------------------
@@ -71,7 +71,6 @@ app.layout = dbc.Container(
                             style={"font-size": 16, "text-align": 'left', 'marginTop': 15})
                 
             )
-    
         ),
         dbc.Row(dbc.RadioItems(id = 'ind_evic', 
                                options = ["Eviction rate", "Deprivation Index"],
@@ -84,7 +83,6 @@ app.layout = dbc.Container(
         ),
         dbc.Row(html.H3("How does neighborhood deprivation relate to evictions?",
                         style={'marginBottom': 10, 'marginTop': 10}),
-
         ),
         dbc.Row(
             [
@@ -167,7 +165,6 @@ def general_map(ind_evic):
     return fig
 
 # Dropdown for radar graph
-# used this as general guide https://www.justintodata.com/python-interactive-dashboard-with-plotly-dash-tutorial/
 @app.callback(
     Output(component_id = 'radar_graph', component_property = 'figure'),
     Input(component_id = zip_dropdown, component_property = 'value')

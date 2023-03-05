@@ -21,7 +21,7 @@ def make_scatter_plot(df, x_var_label):
         fig (plotly figure): the scatter plot with OLS line
     '''
 
-    # Define axis labels for different inputs
+    # Define the x variables for different axis labels 
     if x_var_label == 'Violent Crime':
         x_var = 'violent_crime_scaled_y' 
     elif x_var_label == 'All Crime':
@@ -32,7 +32,7 @@ def make_scatter_plot(df, x_var_label):
         x_var = 'RTI_ratio_y'
     elif x_var_label == 'Time to the Loop':
         x_var = 'time_to_CBD_y'
-    elif x_var_label == 'Distance to the Loop':
+    else:
         x_var = 'distance_to_CBD_y' 
         
     # Build the graph
