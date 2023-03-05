@@ -21,7 +21,7 @@ def make_scatter_plot(df, x_var):
         fig (plotly figure): the scatter plot with OLS line
     '''
 
-    # Define axis labels for differentx inputs
+    # Define axis labels for different inputs
     x_var_label = 'test label'
 
 
@@ -33,10 +33,10 @@ def make_scatter_plot(df, x_var):
                             "eviction_filings_completed_scaled" : "Evictions (per 10,000 residents)",
                         },
                         trendline = "ols", 
-                        #title='Comparison of Deprivation Index to Evictions',
                         hover_name = "zipcode", 
                         hover_data = [x_var, 'eviction_filings_completed_scaled'])
 
-    #fig.show()
+    # color for line should be: rgb(20, 29, 67)
+    # color for scatter points should be: rgb(25, 137, 125)
 
     return fig

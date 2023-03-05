@@ -56,7 +56,7 @@ def create_radar_graph(df, zip_code, zipcode_col_name):
         r = zip_dict[zip_code],
         theta = categories,
         fill = 'toself',
-        name = zip_code
+        name = zip_code,
     ))
 
     # Get maximum value for the different axes
@@ -70,9 +70,9 @@ def create_radar_graph(df, zip_code, zipcode_col_name):
             visible=True,
             range=[0, maxes.max()]
             )),
-        showlegend=False
+        showlegend=True
     )
 
-    #fig.show()
+    # NEED TO ADD A LEGEND
 
     return fig

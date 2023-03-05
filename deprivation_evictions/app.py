@@ -7,6 +7,7 @@ import plotly.express as px
 
 # Load the processed data
 df = pd.read_csv('data_bases/final_data/processed_data.csv')
+df = df.sort_values('zipcode')
 
 # Import the graphs
 from graphs.bivariate_map import bivariate_map, create_legend
@@ -31,10 +32,6 @@ map_fig = bivariate_map(df, colors, zipcodes, 'wdi_scaled', 'eviction_filings_co
 map_legend = create_legend(colors)
 
 # ----------------- SCATTER PLOT ---------------------
-# need to create diplay names?
-#  categories = ['Violent Crime','All Crime','Non-violent Crime', 'Rent-to-income Ratio', 
-#                 'Time to Loop', 'Distance to Loop']
-
 indicator_dropdown = dcc.Dropdown(options = ['violent_crime_scaled_y', 
                                              'crime_scaled_y', 
                                              'non_offensive_crime_scaled_y', 
@@ -47,9 +44,7 @@ scatter_fig = make_scatter_plot(df, 'violent_crime_scaled_y')
 
 
 # ----------------- RADAR PLOT ---------------------
-
 zip_dropdown = dcc.Dropdown(options = df['zipcode'].unique(), value = '60601')
-
 radar_fig = create_radar_graph(df, 60615, 'zipcode')
 
 # ----------------- APP LAYOUT ------------------------
@@ -110,7 +105,7 @@ app.layout = dbc.Container(
                     html.H3(children='Comparison of Zip Code Attributes to City Average',
                             style={'marginBottom': 10, 'marginTop': 20}),
                     zip_dropdown,
-                    #dcc.Graph(id="radar_graph", figure = radar_fig,)
+                    dcc.Graph(id="radar_graph", figure = radar_fig,)
                 ])
             )
         ),
@@ -122,8 +117,6 @@ app.layout = dbc.Container(
         ),
         dbc.Row(
             dbc.Col(
-                # dcc.Graph(id="scatter_graph", figure=scatter_fig),
-
                 html.Div(children=[
                     indicator_dropdown,
                     dcc.Graph(id="scatter_graph", figure = scatter_fig,)
@@ -180,8 +173,7 @@ def general_map(ind_evic):
     Input(component_id = zip_dropdown, component_property = 'value')
 )
 def update_graph(selected_zip):
-    # updated_radar_fig = create_radar_graph(df, selected_zip, 'zipcode')
-    # return updated_radar_fig
+    selected_zip = int(selected_zip)
     return create_radar_graph(df, selected_zip, 'zipcode')
 
 # Dropdown for scatter plot
@@ -190,8 +182,6 @@ def update_graph(selected_zip):
     Input(component_id = indicator_dropdown, component_property = 'value')
 )
 def update_graph(selected_x_var):
-    # updated_scatter_plot = make_scatter_plot(df, selected_x_var, 'num_evictions')
-    # return updated_scatter_plot
     return make_scatter_plot(df, selected_x_var)
 
 
