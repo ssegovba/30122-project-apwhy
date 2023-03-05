@@ -44,7 +44,7 @@ def prepare_df(df, x, y):
     prep_df = df
     
     prep_df = prep_df.rename(columns={'eviction_filings_completed_scaled':'Evictions per capita',
-                             'wdi_scaled': 'Deprivation Index'})
+                             'g1_sum_scaled': 'Deprivation Index'})
     
     #Calculating break points (percentile 33 and 66)
     x_bp = np.percentile(prep_df[x], [33, 66])
@@ -139,8 +139,3 @@ def bivariate_map(df, colors, geojson, x, y):
 
 
     return fig
-
-    
-
-
-

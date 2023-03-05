@@ -37,13 +37,13 @@ map_fig = bivariate_map(df, colors, zipcodes, "Deprivation Index", "Evictions pe
 map_legend = create_legend(colors)
 
 # ----------------- SCATTER PLOT ---------------------
-indicator_dropdown = dcc.Dropdown(options = ['Violent Crime', 
-                                             'All Crime', 
+indicator_dropdown = dcc.Dropdown(options = ['Violent Crime',
                                              'Non-Violent Crime', 
                                              'Rent-to-Income Ratio',
                                              'Time to the Loop',
                                              'Distance to the Loop',
-                                             ], value = 'Violent Crime')
+                                             ], value = 'Violent Crime',
+                                             )
 
 scatter_fig = make_scatter_plot(df, 'Violent Crime')
 
@@ -63,7 +63,7 @@ app.layout = dbc.Container(
         ), 
         dbc.Row(
             dbc.Col(
-                html.H1("Andrew Dunn, Gregory Ho, Santiago Segovia, Stephania Tello Zamudio",
+                html.H1("APWhy Team: Andrew Dunn, Gregory Ho, Santiago Segovia, Stephania Tello Zamudio",
                             style={"font-style": "italic", "font-size": 16, "text-align": 'center'})           
             )
         ),
@@ -79,6 +79,15 @@ app.layout = dbc.Container(
                         using a similar approach as the Multi-dimensional poverty index.",
                             style={"font-size": 16, "text-align": 'left', 'marginTop': 15})
                 
+            )
+        ),
+        dbc.Row(
+            dbc.Col(
+                html.P("For the construction of the deprivation index we analyzed three factors that can characterize neighborhoods:\
+                       1) Safety, described by the per capita amount of violent and non violent crimes; 2) Housing affordability, \
+                       measured by the ratio of median rent and income; and 3) Transport accessibility, which looks at the distance \
+                       and travel time to the Central business district (the Loop).",
+                            style={"font-size": 16, "text-align": 'left'})             
             )
         ),
         dbc.Row(dbc.RadioItems(id = 'ind_evic', 
@@ -116,7 +125,9 @@ app.layout = dbc.Container(
                     html.P("Also add something describing the drop-down.",
                             style={"font-size": 16, "text-align": 'left', 'marginTop': 15}),
                     zip_dropdown,
-                    dcc.Graph(id="radar_graph", figure = radar_fig,)
+                    dcc.Graph(id="radar_graph", figure = radar_fig,
+                              style={'width': '60%', "display": "block","margin-left": "auto", 
+                                     "margin-right": "auto", 'marginTop': 15, 'marginBottom': 10})
                 ])
             )
         ),
