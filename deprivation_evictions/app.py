@@ -106,14 +106,11 @@ app.layout = dbc.Container(
         ),
         dbc.Row(
             dbc.Col(
-                #     dcc.Graph(id="radar_graph", figure=radar_fig,
-                #               style={'width': '100%', 'marginBottom': 25, 'marginTop': 25}),
-                # )
                 html.Div(children=[
                     html.H3(children='Comparison of Zip Code Attributes to City Average',
                             style={'marginBottom': 10, 'marginTop': 20}),
                     zip_dropdown,
-                    dcc.Graph(id="radar_graph", figure = radar_fig,)
+                    #dcc.Graph(id="radar_graph", figure = radar_fig,)
                 ])
             )
         ),
@@ -195,7 +192,7 @@ def update_graph(selected_zip):
 def update_graph(selected_x_var):
     # updated_scatter_plot = make_scatter_plot(df, selected_x_var, 'num_evictions')
     # return updated_scatter_plot
-    return make_scatter_plot(df, selected_x_var, 'eviction_filings_completed_scaled')
+    return make_scatter_plot(df, selected_x_var)
 
 
 if __name__ == '__main__':
