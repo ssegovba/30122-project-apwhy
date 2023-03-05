@@ -7,12 +7,11 @@ from factor_analyzer import FactorAnalyzer
 
 # 1) thresholds represent pre-defined cutoffs obtained from our literature review
 thresholds = {
-'violent_crime': 1002,
-'crime': 3577,
-'non_offensive_crime':458,
+'violent_crime_scaled': 0.04479,
+'non_offensive_crime_scaled':0.032329,
 'RTI_ratio': 0.3,
 'time_to_CBD': 1200, #cleaned_database.csv should have this as well
-'distance_to_CBD': 14159 #cleaned_database.csv should have this as well
+'distance_to_CBD': 14482 #cleaned_database.csv should have this as well
 }
 #'house price affordability': 4, #zillow?
 
@@ -56,6 +55,26 @@ class MultiDimensionalDeprivation:
         cleaned_data = cleaned_data.rename(columns={'zip_code': 'zipcode'})
         merged_data = pd.merge(cleaned_data, travel_data, on='zipcode', how='inner')
         return merged_data
+
+    def raw_normalized_viz(self):
+        '''
+        Normalizes dimensions (for vizualization: radial plot)
+
+        Input: merged_data
+        Returns: matrix Y in normalized form
+        '''
+        mat_y_norm = self.compute_ratios()
+
+        for col in mat_y_norm.columns:
+            if col in self.indicators:
+                dim_means = mat_y_norm[col].mean()
+                dim_stds = mat_y_norm[col].std()
+                mat_y_norm[col] =  (mat_y_norm[col] - dim_means) / dim_stds
+
+        #filter only columns that were standardized 
+        mat_y_norm = mat_y_norm[[col for col in mat_y_norm.columns if col in self.indicators]]
+
+        return mat_y_norm
         
     def deprivation_matrix(self):
         '''
@@ -80,6 +99,7 @@ class MultiDimensionalDeprivation:
         mat_y[merged_data['deprivation_share'] <= self.k] = 0
         
         return mat_y
+
 
     def normalized_gap(self):
         '''
@@ -107,6 +127,7 @@ class MultiDimensionalDeprivation:
             mat_g1[ind] *= mat_y[ind]
 
         return mat_g1
+
 
     def power_gap(self, n):
         '''
@@ -209,24 +230,21 @@ class MultiDimensionalDeprivation:
 
         wgt_dpt_idx = matrix.dot(weights)
 
-        # Additional scaling (min-max) for visualization
+        # Added standard normalization for visualization:
         wdi_scaled = (wgt_dpt_idx - wgt_dpt_idx.min()) / (wgt_dpt_idx.max() - wgt_dpt_idx.min())
 
         output_df = pd.DataFrame({'wdi': wgt_dpt_idx,
                                   'wdi_scaled': wdi_scaled}, index=data.index)
         return output_df
 
-    def extend_data(self,output_path):
-        '''
-        This function updates the cleaned dataset with index and sub-index values
-        '''
-        merged_data = self.compute_ratios()
-        mat_g1 = self.normalized_gap()
-        pca1 = self.pca_weights(mat_g1,6,"varimax")
-        wdi = self.weighted_deprivation_inx(mat_g1, pca1)
+    def extend_data(self):
+        data_extended = (
+            self.compute_ratios()
+            .join(self.raw_normalized_viz().add_suffix('_norm'))
+            .join(self.normalized_gap().add_suffix('_g1').assign(g1_sum=lambda x: x.sum(axis=1)))
+            .join(self.weighted_deprivation_inx(self.normalized_gap(), 
+                                                self.pca_weights(self.normalized_gap(),
+                                                                 6,"varimax")))
+        )
 
-        merged_data1 = pd.merge(merged_data, mat_g1, left_index=True, right_index=True)
-        merged_data2 = pd.merge(merged_data1, wdi, left_index=True, right_index=True)
-
-        merged_data2.to_csv(output_path)
-        return merged_data2
+        return data_extended
