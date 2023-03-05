@@ -164,7 +164,6 @@ app.layout = dbc.Container(
         Output(component_id = 'gen_map', component_property='figure'),
         Input(component_id='ind_evic', component_property= 'value')
 )
-
 def update_graph(ind_evic):
     return general_map(df, ind_evic, zipcodes)
 
