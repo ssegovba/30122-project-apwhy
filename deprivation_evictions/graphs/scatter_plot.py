@@ -9,7 +9,7 @@ import plotly.express as px
 # update graph axis titles
 # round numbers in the hover
 
-def make_scatter_plot(df, x_var):
+def make_scatter_plot(df, x_var_label):
     '''
     Creates a plotly scatter plot
 
@@ -22,21 +22,34 @@ def make_scatter_plot(df, x_var):
     '''
 
     # Define axis labels for different inputs
-    x_var_label = 'test label'
-
-
-
+    if x_var_label == 'Violent Crime':
+        x_var = 'violent_crime_scaled_y' 
+    elif x_var_label == 'All Crime':
+        x_var = 'crime_scaled_y' 
+    elif x_var_label == 'Non-Violent Crime':
+        x_var = 'non_offensive_crime_scaled_y'
+    elif x_var_label == 'Rent-to-Income Ratio':
+        x_var = 'RTI_ratio_y'
+    elif x_var_label == 'Time to the Loop':
+        x_var = 'time_to_CBD_y'
+    elif x_var_label == 'Distance to the Loop':
+        x_var = 'distance_to_CBD_y' 
+        
+    # Build the graph
     fig = px.scatter(df, x = x_var, 
                         y = 'eviction_filings_completed_scaled', 
                         labels={
-                            "x_var" : x_var_label,
+                            x_var : x_var_label,
                             "eviction_filings_completed_scaled" : "Evictions (per 10,000 residents)",
                         },
                         trendline = "ols", 
+                        # Can we add in 'Zip code =' to the hover name?
                         hover_name = "zipcode", 
-                        hover_data = [x_var, 'eviction_filings_completed_scaled'])
-
-    # color for line should be: rgb(20, 29, 67)
-    # color for scatter points should be: rgb(25, 137, 125)
+                        hover_data = [x_var, 'eviction_filings_completed_scaled'],
+                        trendline_color_override = 'rgb(25, 137, 125)'
+                    ).update_traces(
+                        marker=dict(color='rgb(20, 29, 67)')
+                    ).update_xaxes(showgrid=False
+                    ).update_yaxes(showgrid=False)
 
     return fig
