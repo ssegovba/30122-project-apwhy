@@ -37,4 +37,6 @@ def make_scatter_plot(df, x_var):
                         hover_name = "zipcode", 
                         hover_data = [x_var, 'eviction_filings_completed_scaled'])
 
+    #fig.show()
+
     return fig
