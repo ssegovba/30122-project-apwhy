@@ -26,8 +26,9 @@ def create_radar_graph(df, zip_code, zipcode_col_name):
     zip_dict = {}
 
     for index, rows in df.iterrows():
-        zip_dict[index] = [rows.violent_crime_scaled_y, rows.crime_scaled_y, rows.non_offensive_crime_scaled_y, 
-                            rows.RTI_ratio_y, rows.time_to_CBD_y, rows.distance_to_CBD_y]
+        zip_dict[index] = [rows.violent_crime_scaled_norm, rows.crime_scaled_norm, 
+                           rows.non_offensive_crime_scaled_norm, rows.RTI_ratio_norm, 
+                           rows.time_to_CBD_norm, rows.distance_to_CBD_norm]
 
     # Define the data labels, in order
     categories = ['Violent Crime','All Crime','Non-Violent Crime', 
@@ -37,12 +38,12 @@ def create_radar_graph(df, zip_code, zipcode_col_name):
 
     # Graph the city averages
     fig.add_trace(go.Scatterpolar(
-        r = [df['violent_crime_scaled_y'].mean(axis=0), 
-                df['crime_scaled_y'].mean(axis=0), 
-                df['non_offensive_crime_scaled_y'].mean(axis=0), 
-                df['RTI_ratio_y'].mean(axis=0),
-                df['time_to_CBD_y'].mean(axis=0),
-                df['distance_to_CBD_y'].mean(axis=0)],
+        r = [df['violent_crime_scaled_norm'].mean(axis=0), 
+                df['crime_scaled_norm'].mean(axis=0), 
+                df['non_offensive_crime_scaled_norm'].mean(axis=0), 
+                df['RTI_ratio_norm'].mean(axis=0),
+                df['time_to_CBD_norm'].mean(axis=0),
+                df['distance_to_CBD_norm'].mean(axis=0)],
         theta = categories,
         fill = 'toself',
         name = 'City-wide mean',
@@ -61,15 +62,22 @@ def create_radar_graph(df, zip_code, zipcode_col_name):
     ))
 
     # Get maximum value for the different axes
-    maxes = df[['violent_crime_scaled_y', 'crime_scaled_y', 'non_offensive_crime_scaled_y', 'RTI_ratio_y', 
-        'time_to_CBD_y', 'distance_to_CBD_y']].max(axis=0)
+
+    indicators = ['violent_crime_scaled_norm', 'crime_scaled_norm', 
+                'non_offensive_crime_scaled_norm', 'RTI_ratio_norm', 
+                'time_to_CBD_norm', 'distance_to_CBD_norm']
+    
+    maxes = df[indicators].max(axis=0)
+    
+    mins = df[indicators].min(axis=0)
 
     # Add ranges to the graph
     fig.update_layout(
         polar=dict(
             radialaxis=dict(
             visible=True,
-            range=[0, maxes.max()]
+            range=[mins.min(), maxes.max()]
+            #range=[mins.min(), 3]
             )),
         showlegend=True
     )
