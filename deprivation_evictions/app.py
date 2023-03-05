@@ -110,7 +110,7 @@ app.layout = dbc.Container(
                     html.H3(children='Comparison of Zip Code Attributes to City Average',
                             style={'marginBottom': 10, 'marginTop': 20}),
                     zip_dropdown,
-                    dcc.Graph(id="radar_graph", figure = radar_fig,)
+                    #dcc.Graph(id="radar_graph", figure = radar_fig,)
                 ])
             )
         ),
@@ -145,9 +145,9 @@ app.layout = dbc.Container(
 
 def general_map(ind_evic):
     
-    df_map = df 
+    df_map = df
 
-    if ind_evic == 'Evictions per capita':
+    if ind_evic == 'Eviction rate':
         var = 'eviction_filings_completed_scaled'
     else:
         var = 'wdi_scaled'
@@ -160,7 +160,7 @@ def general_map(ind_evic):
         mapbox_style = 'carto-positron',
         center = {"lat": 41.8, "lon": -87.75},
         color=var,
-        color_continuous_scale=['#B8D6BE', '#839F89', '#D5FADD', '#005B5E'],
+        color_continuous_scale=px.colors.sequential.tempo,
         opacity=0.8,
         zoom=9,
         hover_data={var: True},
@@ -192,7 +192,7 @@ def update_graph(selected_zip):
 def update_graph(selected_x_var):
     # updated_scatter_plot = make_scatter_plot(df, selected_x_var, 'num_evictions')
     # return updated_scatter_plot
-    return make_scatter_plot(df, selected_x_var, 'eviction_filings_completed_scaled')
+    return make_scatter_plot(df, selected_x_var)
 
 
 if __name__ == '__main__':
