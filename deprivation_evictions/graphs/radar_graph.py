@@ -20,7 +20,6 @@ def create_radar_graph(df, zip_code, zipcode_col_name):
     '''
 
     # Format zip code column correctly
-    #df[zipcode_col_name] = df[zipcode_col_name].apply(str)
     df = df.set_index(zipcode_col_name)
 
     # Get the data in the right format
@@ -30,9 +29,9 @@ def create_radar_graph(df, zip_code, zipcode_col_name):
         zip_dict[index] = [rows.violent_crime_scaled_y, rows.crime_scaled_y, rows.non_offensive_crime_scaled_y, 
                             rows.RTI_ratio_y, rows.time_to_CBD_y, rows.distance_to_CBD_y]
 
-    # update data categories upon final data
-    categories = ['Violent Crime','All Crime','Non-violent Crime', 
-                  'Rent-to-income Ratio', 'Time to Loop', 'Distance to Loop']
+    # Update data categories upon final data
+    categories = ['Violent Crime','All Crime','Non-Violent Crime', 
+                  'Rent-to-Income Ratio', 'Time to Loop', 'Distance to Loop']
 
     fig = go.Figure()   
 
@@ -46,17 +45,19 @@ def create_radar_graph(df, zip_code, zipcode_col_name):
                 df['distance_to_CBD_y'].mean(axis=0)],
         theta = categories,
         fill = 'toself',
-        name = 'City-wide mean'
+        name = 'City-wide mean',
+        fillcolor = 'rgb(222, 224, 210)',
+        line_color = 'rgb(222, 224, 210)'
     ))
 
     # Create the graph for a specific zip code
-    #str_zip_code = str(zip_code)
-
     fig.add_trace(go.Scatterpolar(
         r = zip_dict[zip_code],
         theta = categories,
         fill = 'toself',
-        name = zip_code,
+        name = "Zip code = {}".format(zip_code),
+        fillcolor = 'rgb(153, 189, 156)',
+        line_color = 'rgb(153, 189, 156)',
     ))
 
     # Get maximum value for the different axes
@@ -72,7 +73,5 @@ def create_radar_graph(df, zip_code, zipcode_col_name):
             )),
         showlegend=True
     )
-
-    # NEED TO ADD A LEGEND
 
     return fig
