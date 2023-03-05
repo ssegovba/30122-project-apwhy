@@ -8,7 +8,7 @@ def general_map(df, ind_evic, geojson):
     df_map = df
 
     df_map = df_map.rename(columns={'eviction_filings_completed_scaled':'Evictions per capita',
-    'wdi_scaled': 'Deprivation Index'})
+    'g1_sum': 'Deprivation Index'})
 
     # if ind_evic == 'Evictions per capita':
     #     var = 'Evictions per capita'
