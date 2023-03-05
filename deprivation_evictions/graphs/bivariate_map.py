@@ -126,7 +126,7 @@ def bivariate_map(df, colors, geojson, x, y):
         opacity=0.8,
         zoom=9,
         hover_name='zipcode',
-        hover_data={"Evictions per capita": True, "Deprivation Index": True,
+        hover_data={"Evictions per capita": ':.2f', "Deprivation Index": ':.2f',
                     'biv_bins': False, 'zipcode': False},
     )
 

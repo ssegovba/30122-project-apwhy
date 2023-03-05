@@ -27,7 +27,7 @@ def general_map(df, ind_evic, geojson):
         opacity=0.8,
         zoom=9,
         hover_name='zipcode',
-        hover_data={ind_evic: True, 'zipcode': False},
+        hover_data={ind_evic: ':.2f', 'zipcode': False},
     )
 
     fig.update_geos(fitbounds='locations', visible=False)
