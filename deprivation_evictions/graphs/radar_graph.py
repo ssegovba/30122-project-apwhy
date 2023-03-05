@@ -20,7 +20,7 @@ def create_radar_graph(df, zip_code, zipcode_col_name):
     '''
 
     # Format zip code column correctly
-    df[zipcode_col_name].apply(str)
+    #df[zipcode_col_name] = df[zipcode_col_name].apply(str)
     df = df.set_index(zipcode_col_name)
 
     # Get the data in the right format
@@ -31,8 +31,8 @@ def create_radar_graph(df, zip_code, zipcode_col_name):
                             rows.RTI_ratio_y, rows.time_to_CBD_y, rows.distance_to_CBD_y]
 
     # update data categories upon final data
-    categories = ['Violent Crime','All Crime','Non-violent Crime', 'Rent-to-income Ratio', 
-                'Time to Loop', 'Distance to Loop']
+    categories = ['Violent Crime','All Crime','Non-violent Crime', 
+                  'Rent-to-income Ratio', 'Time to Loop', 'Distance to Loop']
 
     fig = go.Figure()   
 
@@ -50,6 +50,8 @@ def create_radar_graph(df, zip_code, zipcode_col_name):
     ))
 
     # Create the graph for a specific zip code
+    #str_zip_code = str(zip_code)
+
     fig.add_trace(go.Scatterpolar(
         r = zip_dict[zip_code],
         theta = categories,
@@ -59,16 +61,18 @@ def create_radar_graph(df, zip_code, zipcode_col_name):
 
     # Get maximum value for the different axes
     maxes = df[['violent_crime_scaled_y', 'crime_scaled_y', 'non_offensive_crime_scaled_y', 'RTI_ratio_y', 
-        'time_to_CBD_y', 'distance_to_CBD_y']].max(axis=1)
+        'time_to_CBD_y', 'distance_to_CBD_y']].max(axis=0)
 
     # Add ranges to the graph
     fig.update_layout(
         polar=dict(
             radialaxis=dict(
             visible=True,
-            range=[0, maxes.max]
+            range=[0, maxes.max()]
             )),
         showlegend=False
     )
+
+    #fig.show()
 
     return fig

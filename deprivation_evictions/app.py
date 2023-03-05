@@ -106,9 +106,6 @@ app.layout = dbc.Container(
         ),
         dbc.Row(
             dbc.Col(
-                #     dcc.Graph(id="radar_graph", figure=radar_fig,
-                #               style={'width': '100%', 'marginBottom': 25, 'marginTop': 25}),
-                # )
                 html.Div(children=[
                     html.H3(children='Comparison of Zip Code Attributes to City Average',
                             style={'marginBottom': 10, 'marginTop': 20}),
