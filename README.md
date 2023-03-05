@@ -33,6 +33,6 @@ The IDE may automatically launch a new web browser tab, or may provide a local U
 
 ## For a description of the project:
 
-### Click here for a summary of the project
+### Click here for a summary of the project -- add link when available
 
-### Click here for an in-depth description of the methodology
+### Click here for an in-depth description of the methodology -- add link when available
