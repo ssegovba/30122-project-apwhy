@@ -42,11 +42,11 @@ def prepare_df(df, x, y):
     Returns: (DataFrame) df with an additional column
     '''
     #Calculating break points (percentile 33 and 66)
-    x_bp = np.percentile(df[x], [33, 66])
+    #x_bp = np.percentile(df[x], [33, 66])
     y_bp = np.percentile(df[y], [33, 66])
 
     #Assigning values of x and y to one of 3 bins
-    x_bins = [set_interval_value(val_x, x_bp[0], x_bp[1]) for val_x in df[x]]
+    x_bins = [set_interval_value(val_x, -1, 1) for val_x in df[x]]
     y_bins = [set_interval_value(val_y, y_bp[0], y_bp[1]) for val_y in df[y]]
 
     #Calculating the position of each x and y pair in the 9 color matrix
@@ -74,7 +74,7 @@ def create_legend(colors):
     fig = px.imshow(
         data,
         labels=dict(x = "Deprivation Index", y = "Eviction rate"),
-        x=["< 0.33", "< 0.66", "< 1.0"],
+        x=["< -1.0", "< 1.0", "1.0 <"],
         y=["High", "Medium", "Low"],
         color_continuous_scale=legend_colors,
                                 )
