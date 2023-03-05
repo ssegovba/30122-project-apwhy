@@ -1,7 +1,5 @@
-#make sure to install these packages before running:
-# pip install censusdata
-# pip install csv
-# pip install pandas
+# Retrieve 2019 data of the American Census Survey
+# Written by: Stephania Tello Zamudio
 
 import censusdata
 
