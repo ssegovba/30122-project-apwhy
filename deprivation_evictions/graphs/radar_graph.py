@@ -26,12 +26,12 @@ def create_radar_graph(df, zip_code, zipcode_col_name):
     zip_dict = {}
 
     for index, rows in df.iterrows():
-        zip_dict[index] = [rows.violent_crime_scaled_norm, rows.crime_scaled_norm, 
+        zip_dict[index] = [rows.violent_crime_scaled_norm,
                            rows.non_offensive_crime_scaled_norm, rows.RTI_ratio_norm, 
                            rows.time_to_CBD_norm, rows.distance_to_CBD_norm]
 
     # Define the data labels, in order
-    categories = ['Violent Crime','All Crime','Non-Violent Crime', 
+    categories = ['Violent Crime', 'Non-Violent Crime', 
                   'Rent-to-Income Ratio', 'Time to Loop', 'Distance to Loop']
 
     fig = go.Figure()   
@@ -39,7 +39,6 @@ def create_radar_graph(df, zip_code, zipcode_col_name):
     # Graph the city averages
     fig.add_trace(go.Scatterpolar(
         r = [df['violent_crime_scaled_norm'].mean(axis=0), 
-                df['crime_scaled_norm'].mean(axis=0), 
                 df['non_offensive_crime_scaled_norm'].mean(axis=0), 
                 df['RTI_ratio_norm'].mean(axis=0),
                 df['time_to_CBD_norm'].mean(axis=0),
@@ -63,7 +62,7 @@ def create_radar_graph(df, zip_code, zipcode_col_name):
 
     # Get maximum value for the different axes
 
-    indicators = ['violent_crime_scaled_norm', 'crime_scaled_norm', 
+    indicators = ['violent_crime_scaled_norm', 
                 'non_offensive_crime_scaled_norm', 'RTI_ratio_norm', 
                 'time_to_CBD_norm', 'distance_to_CBD_norm']
     
