@@ -41,18 +41,23 @@ def prepare_df(df, x, y):
     
     Returns: (DataFrame) df with an additional column
     '''
+    prep_df = df
+    
+    prep_df = prep_df.rename(columns={'eviction_filings_completed_scaled':'Evictions per capita',
+                             'wdi_scaled': 'Deprivation Index'})
+    
     #Calculating break points (percentile 33 and 66)
-    #x_bp = np.percentile(df[x], [33, 66])
-    y_bp = np.percentile(df[y], [33, 66])
+    x_bp = np.percentile(prep_df[x], [33, 66])
+    y_bp = np.percentile(prep_df[y], [33, 66])
 
     #Assigning values of x and y to one of 3 bins
-    x_bins = [set_interval_value(val_x, -1, 1) for val_x in df[x]]
-    y_bins = [set_interval_value(val_y, y_bp[0], y_bp[1]) for val_y in df[y]]
+    x_bins = [set_interval_value(val_x, x_bp[0], x_bp[1]) for val_x in prep_df[x]]
+    y_bins = [set_interval_value(val_y, y_bp[0], y_bp[1]) for val_y in prep_df[y]]
 
     #Calculating the position of each x and y pair in the 9 color matrix
-    df['biv_bins'] = [int(val_x + 3 * val_y) for val_x, val_y in zip(x_bins, y_bins)]
+    prep_df['biv_bins'] = [int(val_x + 3 * val_y) for val_x, val_y in zip(x_bins, y_bins)]
 
-    return df
+    return prep_df
 
 
 #Creating the color square legend 
@@ -73,8 +78,8 @@ def create_legend(colors):
 
     fig = px.imshow(
         data,
-        labels=dict(x = "Deprivation Index", y = "Eviction rate"),
-        x=["< -1.0", "< 1.0", "1.0 <"],
+        labels=dict(x = "Deprivation Index", y = "Evictions per capita"),
+        x=["< 0.33", "< 0.66", "< 1.0"],
         y=["High", "Medium", "Low"],
         color_continuous_scale=legend_colors,
                                 )
@@ -106,6 +111,9 @@ def bivariate_map(df, colors, geojson, x, y):
 
     final_df = prepare_df(df, x, y)
 
+    # final_df.rename(columns={'eviction_filings_completed_scaled':'Evictions per capita',
+    #                          'wdi_scaled': 'Deprivation Index'}, inplace=True)
+
     fig = px.choropleth_mapbox(
         final_df,
         featureidkey="properties.zip",
@@ -117,8 +125,9 @@ def bivariate_map(df, colors, geojson, x, y):
         color_continuous_scale=colors,
         opacity=0.8,
         zoom=9,
-        hover_data={"eviction_filings_completed_scaled": True, "wdi_scaled": True,
-                    'biv_bins': False},
+        hover_name='zipcode',
+        hover_data={"Evictions per capita": True, "Deprivation Index": True,
+                    'biv_bins': False, 'zipcode': False},
     )
 
     fig.update_geos(fitbounds='locations', visible=False)
