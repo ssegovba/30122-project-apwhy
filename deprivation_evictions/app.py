@@ -3,16 +3,16 @@ from urllib.request import urlopen
 import json
 from dash import Dash, dcc, html, Input, Output
 import dash_bootstrap_components as dbc
-import plotly.express as px
 
 # Load the processed data
-df = pd.read_csv('data_bases/final_data/processed_data.csv')
+df = pd.read_csv('deprivation_evictions/data_bases/final_data/processed_data.csv')
 df = df.sort_values('zipcode')
 
 # Import the graphs
-from graphs.bivariate_map import bivariate_map, create_legend
-from graphs.scatter_plot import make_scatter_plot
-from graphs.radar_graph import create_radar_graph
+from .graphs.bivariate_map import bivariate_map, create_legend
+from .graphs.scatter_plot import make_scatter_plot
+from .graphs.radar_graph import create_radar_graph
+from .graphs.general_map import general_map
 
 # Boundaries by Zip code - Chicago (Geojson)
 boundaries_url = "https://data.cityofchicago.org/api/geospatial/gdcf-axmw?method=export&format=GeoJSON"
@@ -22,13 +22,17 @@ with urlopen(boundaries_url) as response:
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.FLATLY])
 
+# ----------------- GENERAL MAP -----------------------
+
+gen_map = general_map(df, 'Evictions per capita', zipcodes)
+
 # ----------------- BIVARIATE MAP ---------------------
 
 colors = ['rgb(222, 224, 210)', 'rgb(189, 206, 181)', 'rgb(153, 189, 156)', 
           'rgb(110, 173, 138)', 'rgb(65, 157, 129)', 'rgb(25, 137, 125)', 
           'rgb(18, 116, 117)', 'rgb(28, 72, 93)', 'rgb(20, 29, 67)']
 
-map_fig = bivariate_map(df, colors, zipcodes, 'wdi_scaled', 'eviction_filings_completed_scaled')
+map_fig = bivariate_map(df, colors, zipcodes, "Deprivation Index", "Evictions per capita")
 map_legend = create_legend(colors)
 
 # ----------------- SCATTER PLOT ---------------------
@@ -64,8 +68,12 @@ app.layout = dbc.Container(
         ),
         dbc.Row(
             dbc.Col(
-                html.P("Evictions are one of the main consequences of the lack of affordable housing in the US. \
-                        This project looks to understand what neighborhood characteristics are associated with eviction in \
+                html.P("Evictions in the United States have become a pressing issue, especially as the country faces a growing \
+                       affordable housing crisis. Many Americans struggle to find homes they can afford, and as a result, they \
+                       may find themselves at risk of eviction. This can be due to a variety of factors, such as job loss, \
+                       unexpected expenses, or rising housing costs. Unfortunately, evictions can further exacerbate the \
+                       lack of affordable housing, as displaced tenants may struggle to find another place to live.\
+                        This project looks to understand what neighborhood characteristics are associated with evictions in \
                         the city of Chicago. In order to do that, we construct an index to measure neighborhood deprivation, \
                         using a similar approach as the Multi-dimensional poverty index.",
                             style={"font-size": 16, "text-align": 'left', 'marginTop': 15})
@@ -73,13 +81,13 @@ app.layout = dbc.Container(
             )
         ),
         dbc.Row(dbc.RadioItems(id = 'ind_evic', 
-                               options = ["Eviction rate", "Deprivation Index"],
-                               value = "Eviction rate",
+                               options = ["Evictions per capita", "Deprivation Index"],
+                               value = "Evictions per capita",
                                inline = True)
         ),
         dbc.Row(
-        dcc.Graph(id="gen_map", figure={},
-                  style={'width': '100%', 'marginBottom': 25, 'marginTop': 25})
+        dcc.Graph(id="gen_map", figure=gen_map,
+                  style={'height': '700', 'width': '100%', 'marginBottom': 25, 'marginTop': 25})
         ),
         dbc.Row(html.H3("How does neighborhood deprivation relate to evictions?",
                         style={'marginBottom': 10, 'marginTop': 10}),
@@ -88,7 +96,7 @@ app.layout = dbc.Container(
             [
             dbc.Col(
                 dcc.Graph(id="map", figure=map_fig,
-                          style={'width': '100%', 'marginBottom': 25, 'marginTop': 25}),
+                          style={'height': '700','width': '100%', 'marginBottom': 25, 'marginTop': 25}),
                 width={"size":9}
             ),
             dbc.Col(
@@ -134,35 +142,8 @@ app.layout = dbc.Container(
         Input(component_id='ind_evic', component_property= 'value')
 )
 
-def general_map(ind_evic):
-    
-    df_map = df
-
-    if ind_evic == 'Eviction rate':
-        var = 'eviction_filings_completed_scaled'
-    else:
-        var = 'wdi_scaled'
-    
-    fig = px.choropleth_mapbox(
-        df_map,
-        featureidkey="properties.zip",
-        geojson=zipcodes,
-        locations='zipcode',
-        mapbox_style = 'carto-positron',
-        center = {"lat": 41.8, "lon": -87.75},
-        color=var,
-        color_continuous_scale=px.colors.sequential.tempo,
-        opacity=0.8,
-        zoom=9,
-        hover_data={var: True},
-    )
-
-    fig.update_geos(fitbounds='locations', visible=False)
-
-    fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0},
-                      coloraxis_showscale=True)
-
-    return fig
+def update_graph(ind_evic):
+    return general_map(df, ind_evic, zipcodes)
 
 # Dropdown for radar graph
 @app.callback(
@@ -183,4 +164,4 @@ def update_graph(selected_x_var):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True, port=8092)
+    app.run_server(debug=True, port=32951)
