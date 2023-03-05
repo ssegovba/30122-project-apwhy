@@ -1,10 +1,18 @@
-# make initial data that we can structure visualizations on
+# Make initial data that we can structure initial visualizations on
+# Written by Andrew Dunn
+# Edited by Stephania Tello Zamudio
+
 import pandas as pd
 import numpy as np
 
 def make_dummy_data():
     '''
-    MAKE DOC STRING
+    Make dummy data in a pandas dataframe, to use to create dummy visualizations
+
+    Inputs: none
+
+    Returns:
+        df (pandas dataframe): data frame with Chicago zips and dummy data
     '''
     NUM_ROWS = 59
 

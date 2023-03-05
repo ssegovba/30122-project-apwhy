@@ -40,7 +40,7 @@ def make_scatter_plot(df, x_var_label):
                         y = 'eviction_filings_completed_scaled', 
                         labels={
                             x_var : x_var_label,
-                            "eviction_filings_completed_scaled" : "Evictions (per 10,000 residents)",
+                            "eviction_filings_completed_scaled" : "Evictions (per capita)",
                         },
                         trendline = "ols", 
                         # Can we add in 'Zip code =' to the hover name?

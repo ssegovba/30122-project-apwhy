@@ -7,6 +7,7 @@ import dash_bootstrap_components as dbc
 # Load the processed data
 df = pd.read_csv('deprivation_evictions/data_bases/final_data/processed_data.csv')
 df = df.sort_values('zipcode')
+df = df.round(3)
 
 # Import the graphs
 from .graphs.bivariate_map import bivariate_map, create_legend
