@@ -1,3 +1,6 @@
+# Code to create the dashboard
+# Built and edited by Stephania Tello Zamudio and Andrew Dunn
+
 import pandas as pd
 from urllib.request import urlopen
 import json
@@ -12,6 +15,8 @@ from .graphs.general_map import general_map
 
 # Load the processed data
 df = pd.read_csv('deprivation_evictions/data_bases/final_data/processed_data.csv')
+
+# Do final edits to the data for the visualizations
 df = df.sort_values('zipcode')
 df = df.round(3)
 
@@ -24,11 +29,9 @@ with urlopen(boundaries_url) as response:
 app = Dash(__name__, external_stylesheets=[dbc.themes.FLATLY])
 
 # ----------------- GENERAL MAP -----------------------
-
 gen_map = general_map(df, 'Evictions per capita', zipcodes)
 
 # ----------------- BIVARIATE MAP ---------------------
-
 colors = ['rgb(222, 224, 210)', 'rgb(189, 206, 181)', 'rgb(153, 189, 156)', 
           'rgb(110, 173, 138)', 'rgb(65, 157, 129)', 'rgb(25, 137, 125)', 
           'rgb(18, 116, 117)', 'rgb(28, 72, 93)', 'rgb(20, 29, 67)']
@@ -86,7 +89,7 @@ app.layout = dbc.Container(
                 html.P("For the construction of the deprivation index we analyzed three factors that can characterize neighborhoods:\
                        1) Safety, described by the per capita amount of violent and non violent crimes; 2) Housing affordability, \
                        measured by the ratio of median rent and income; and 3) Transport accessibility, which looks at the distance \
-                       and travel time to the Central business district (the Loop).",
+                       and travel time to the central business district (the Loop).",
                             style={"font-size": 16, "text-align": 'left'})             
             )
         ),
@@ -118,11 +121,15 @@ app.layout = dbc.Container(
         dbc.Row(
             dbc.Col(
                 html.Div(children=[
-                    html.H3(children='Comparison of Zip Code Attributes to City Average',
+                    html.H3(children='Comparison of Attributes by Zip Code to City Averages',
                             style={'marginBottom': 10, 'marginTop': 20}),
-                    html.P("Descriptive text of this graph - to be completed.",
+                    html.P("The graph below compares the indicators which compose the deprivation index of an individual zip code \
+                           to the overall average of all zip codes. All indicators are normalized such that their average is 0 and \
+                           their standard deviation is 1. Doing this normalization makes the units for each of the indicators \
+                           equivalent and allows them to be compared against each other. Higher values for each indicator indicate \
+                           higher levels of deprivation; lower values for each indicator indicate lowers levels of deprivation.",
                             style={"font-size": 16, "text-align": 'left', 'marginTop': 15}),
-                    html.P("Also add something describing the drop-down.",
+                    html.P("Use the drop-down menu to select a zip code to compare to the city average.",
                             style={"font-size": 16, "text-align": 'left', 'marginTop': 15}),
                     zip_dropdown,
                     dcc.Graph(id="radar_graph", figure = radar_fig,
@@ -139,13 +146,16 @@ app.layout = dbc.Container(
         ),
         dbc.Row(
             dbc.Col(
-                html.P("Descriptive text of this graph - to be completed.",
+                html.P("The scatter plot below compares the distribution of individual indicators which compose the index \
+                       to the distribution of evictions per capita. All indicators are normalized such that their average \
+                       is 0 and their standard deviation is 1. Each dot in the scatter plot represents the values for a zip \
+                       code in Chicago.",
                         style={"font-size": 16, "text-align": 'left', 'marginTop': 15}),
             )
         ),
         dbc.Row(
             dbc.Col(
-                html.P("Also add something describing the drop-down menu.",
+                html.P("Select the indicator to compare against per-capita evictions:",
                         style={"font-size": 16, "text-align": 'left', 'marginTop': 15}),
             )
         ),
@@ -159,7 +169,7 @@ app.layout = dbc.Container(
         ),
         dbc.Row(
             dbc.Col(
-                html.P("For more info, visit the methodology doc at this URL:",
+                html.P("For more info on the research, visit the methodology doc at this URL:",
                         style={"font-size": 16, "text-align": 'left', 'marginTop': 15}),
             )
         ),
