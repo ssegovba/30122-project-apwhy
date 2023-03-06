@@ -23,9 +23,9 @@ def make_scatter_plot(df, x_var_label):
 
     # Define the x variables for different axis labels 
     if x_var_label == 'Violent Crime':
-        x_var = 'violent_crime_scaled_norm' 
+        x_var = 'violent_crime_norm' 
     elif x_var_label == 'Non-Violent Crime':
-        x_var = 'non_offensive_crime_scaled_norm'
+        x_var = 'non_offensive_crime_norm'
     elif x_var_label == 'Rent-to-Income Ratio':
         x_var = 'RTI_ratio_norm'
     elif x_var_label == 'Time to the Loop':

@@ -26,8 +26,8 @@ def create_radar_graph(df, zip_code, zipcode_col_name):
     zip_dict = {}
 
     for index, rows in df.iterrows():
-        zip_dict[index] = [rows.violent_crime_scaled_norm,
-                           rows.non_offensive_crime_scaled_norm, rows.RTI_ratio_norm, 
+        zip_dict[index] = [rows.violent_crime_norm,
+                           rows.non_offensive_crime_norm, rows.RTI_ratio_norm, 
                            rows.time_to_CBD_norm, rows.distance_to_CBD_norm]
 
     # Define the data labels, in order
@@ -38,16 +38,16 @@ def create_radar_graph(df, zip_code, zipcode_col_name):
 
     # Graph the city averages
     fig.add_trace(go.Scatterpolar(
-        r = [df['violent_crime_scaled_norm'].mean(axis=0), 
-                df['non_offensive_crime_scaled_norm'].mean(axis=0), 
+        r = [df['violent_crime_norm'].mean(axis=0), 
+                df['non_offensive_crime_norm'].mean(axis=0), 
                 df['RTI_ratio_norm'].mean(axis=0),
                 df['time_to_CBD_norm'].mean(axis=0),
                 df['distance_to_CBD_norm'].mean(axis=0)],
         theta = categories,
         fill = 'toself',
         name = 'City-wide mean',
-        fillcolor = 'rgb(222, 224, 210)',
-        line_color = 'rgb(222, 224, 210)'
+        fillcolor = 'rgb(65, 157, 129)',
+        line_color = 'rgb(65, 157, 129)'
     ))
 
     # Create the graph for a specific zip code
@@ -56,14 +56,14 @@ def create_radar_graph(df, zip_code, zipcode_col_name):
         theta = categories,
         fill = 'toself',
         name = "Zip code = {}".format(zip_code),
-        fillcolor = 'rgb(153, 189, 156)',
-        line_color = 'rgb(153, 189, 156)'
+        fillcolor = 'rgb(28, 72, 93)',
+        line_color = 'rgb(28, 72, 93)'
     ))
 
     # Get maximum value for the different axes
 
-    indicators = ['violent_crime_scaled_norm', 
-                'non_offensive_crime_scaled_norm', 'RTI_ratio_norm', 
+    indicators = ['violent_crime_norm', 
+                'non_offensive_crime_norm', 'RTI_ratio_norm', 
                 'time_to_CBD_norm', 'distance_to_CBD_norm']
     
     maxes = df[indicators].max(axis=0)
