@@ -150,7 +150,8 @@ app.layout = dbc.Container(
                 html.P("The scatter plot below compares the distribution of the deprivation index to the distribution of evictions. \
                        Each dot in the scatter plot represents the values for a zip code. Use the drop-down to further compare the  \
 ]                       the distribution of the individual indicators which compose the index against evictions All indicators are \
-                       normalized such that their average is 0 and their standard deviation is 1.",
+                       normalized such that their average is 0 and their standard deviation is 1. We overlay an OLS prediction line \
+                       to visualize the linear relationship between the two variables.",
                         style={"font-size": 16, "text-align": 'left', 'marginTop': 15}),
             )
         ),
