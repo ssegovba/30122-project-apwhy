@@ -7,11 +7,11 @@ from factor_analyzer import FactorAnalyzer
 
 # 1) thresholds represent pre-defined cutoffs obtained from our literature review
 thresholds = {
-'violent_crime_scaled': 0.04479,
-'non_offensive_crime_scaled':0.032329,
+'violent_crime': 1114,
+'non_offensive_crime':528.4,
 'RTI_ratio': 0.3,
 'time_to_CBD': 1200, #cleaned_database.csv should have this as well
-'distance_to_CBD': 14482 #cleaned_database.csv should have this as well
+'distance_to_CBD': 7273.2 #cleaned_database.csv should have this as well
 }
 #'house price affordability': 4, #zillow?
 
