@@ -1,26 +1,28 @@
+# Constructing a deprivation index following the AF method
+# Created by Gregory Ho
+
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 from factor_analyzer import FactorAnalyzer
 
-### To run, we have to instantiate the following global parameters###
+### To run, the following parameters are instantiated ###
 
 # 1) thresholds represent pre-defined cutoffs obtained from our literature review
 thresholds = {
-'violent_crime': 1114,
-'non_offensive_crime':528.4,
-'RTI_ratio': 0.3,
-'time_to_CBD': 1200, #cleaned_database.csv should have this as well
-'distance_to_CBD': 7273.2 #cleaned_database.csv should have this as well
+'violent_crime': 1114, #corresponding to 1st quantile
+'non_offensive_crime':528.4, #corresponding to 1st quantile
+'RTI_ratio': 0.3, # based on literature review
+'time_to_CBD': 1200, # based on literature review
+'distance_to_CBD': 7273.2 #corresponding to 1st quantile
 }
-#'house price affordability': 4, #zillow?
 
 # 2) specify fixed cutoff as specified in AF method. 
 #    Criteria is to censor data for non-deprived neighborhoods
 #    k=0 because we have low count of sub-indicators
 k = 0
 
-# 3) path to clean data (currently synthetic as we are still merging our dataset)
+# 3) path to clean data
 cleaned_data = "../data_bases/clean_data/clean_database.csv"
 transport_data = "../data_bases/raw_data/google_distancematrix.csv"
 output_path = "../data_bases/final_data/processed_data.csv"
@@ -129,53 +131,6 @@ class MultiDimensionalDeprivation:
         return mat_g1
 
 
-    def power_gap(self, n):
-        '''
-        Computes power gap - Matrix g^alpha (n = alpha).
-        This matrix is used by policymakers to target the most deprived 
-        neighborhoods first
-
-        Input: Matrix g^1(k) from fn: normalized_gap()
-        Returns: Matrix g^alpha(k) as a pandas dataframe
-        '''
-        mat_g2 = self.normalized_gap() ** n
-        return mat_g2
-
-    def deprivation_share(self):
-        '''
-        Computes M0 (Called Adjusted Headcount ratio in the AF method)
-        The ratio is a metrics of structural deprivation for those 
-        included in cutoff k.
-
-        Input: Matrix Y from fn:deprivation_matrix()
-        Returns: A ratio. 
-        '''
-        mat_y = self.deprivation_matrix()
-        non_zero_rows = mat_y.any(axis=1)
-        num_non_zero_rows = non_zero_rows.sum()
-        denominator = num_non_zero_rows * mat_y.shape[1]
-        deprivation_share = mat_y.sum().sum() / denominator
-
-        return deprivation_share
-
-    def adj_deprivation_gap(self):
-        '''
-        Computes Matrix M1 (called Adjusted Poverty gap in AF method)
-        This matrix encodes averages matrix g1 to obtain the average gap 
-        (satisfies monotonicity)
-
-        Input: Matrix g1 from fn:normalized_gap()
-        Returns: A ratio.
-        '''
-        mat_g1 = self.normalized_gap()
-        non_zero_rows = mat_g1.any(axis=1)
-        num_non_zero_rows = non_zero_rows.sum()
-        denominator = num_non_zero_rows * mat_g1.shape[1]
-        deprivation_share = mat_g1.sum().sum() / denominator
-
-        return deprivation_share
-
-
     def pca_weights(self, matrix, n_comp=6, rotate_fn='oblimin'):
         '''
         Performs PCA to express deprivation weights in terms of their 
@@ -234,7 +189,7 @@ class MultiDimensionalDeprivation:
         wdi_scaled = (wgt_dpt_idx - wgt_dpt_idx.min()) / (wgt_dpt_idx.max() - wgt_dpt_idx.min())
 
         output_df = pd.DataFrame({'wdi': wgt_dpt_idx,
-                                  'wdi_scaled': wdi_scaled}, index=data.index)
+                                  'wdi_scaled': wdi_scaled}, index=self.data.index)
         return output_df
 
     def extend_data(self):
@@ -248,3 +203,54 @@ class MultiDimensionalDeprivation:
         )
 
         return data_extended
+    
+
+    ## These additional functions were created as part of the AF methodology ##
+    ## But were not utilized because their functions are used in specific    ##
+    ## policy situations                                                     ##
+
+    def power_gap(self, n):
+        '''
+        Computes power gap - Matrix g^alpha (n = alpha).
+        This matrix is used by policymakers to target the most deprived 
+        neighborhoods first
+
+        Input: Matrix g^1(k) from fn: normalized_gap()
+        Returns: Matrix g^alpha(k) as a pandas dataframe
+        '''
+        mat_g2 = self.normalized_gap() ** n
+        return mat_g2
+
+    def deprivation_share(self):
+        '''
+        Computes M0 (Called Adjusted Headcount ratio in the AF method)
+        The ratio is a metrics of structural deprivation for those 
+        included in cutoff k.
+
+        Input: Matrix Y from fn:deprivation_matrix()
+        Returns: A ratio. 
+        '''
+        mat_y = self.deprivation_matrix()
+        non_zero_rows = mat_y.any(axis=1)
+        num_non_zero_rows = non_zero_rows.sum()
+        denominator = num_non_zero_rows * mat_y.shape[1]
+        deprivation_share = mat_y.sum().sum() / denominator
+
+        return deprivation_share
+
+    def adj_deprivation_gap(self):
+        '''
+        Computes Matrix M1 (called Adjusted Poverty gap in AF method)
+        This matrix encodes averages matrix g1 to obtain the average gap 
+        (satisfies monotonicity)
+
+        Input: Matrix g1 from fn:normalized_gap()
+        Returns: A ratio.
+        '''
+        mat_g1 = self.normalized_gap()
+        non_zero_rows = mat_g1.any(axis=1)
+        num_non_zero_rows = non_zero_rows.sum()
+        denominator = num_non_zero_rows * mat_g1.shape[1]
+        deprivation_share = mat_g1.sum().sum() / denominator
+
+        return deprivation_share
