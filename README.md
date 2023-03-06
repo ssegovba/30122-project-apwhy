@@ -1,10 +1,10 @@
-[![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-c66648af7eb3fe8bc4f294546bfd86ef473780cde1dea487d3c4ff354943c9ae.svg)](https://classroom.github.com/online_ide?assignment_repo_id=9892417&assignment_repo_type=AssignmentRepo)
-
-
 # Evictions and Deprivation in Chicago
 
 ### Team Members
 [Andrew Dunn](https://github.com/andrewjtdunn), [Gregory Ho](https://github.com/GregoryHo88), [Santiago Segovia](https://github.com/ssegovba), [Stephania Tello Zamudio](https://github.com/stephatz)
+
+## Project Summary
+This project conducts data analysis to understand the relationship between a deprivation index, constructed using socioeconomic data from a variety of sources, and instances of eviction in the city of Chicago. The python application creates an interactive dashboard which summarizes the relationship betwen the the different factors. Follow the steps below to launch the dashboard.
 
 ## To Launch the Application
 
