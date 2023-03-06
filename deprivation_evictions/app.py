@@ -39,8 +39,9 @@ colors = ['rgb(222, 224, 210)', 'rgb(189, 206, 181)', 'rgb(153, 189, 156)',
 map_fig = bivariate_map(df, colors, zipcodes, "Deprivation Index", "Evictions per capita")
 map_legend = create_legend(colors)
 
-# ----------------- SCATTER PLOT ---------------------
-indicator_dropdown = dcc.Dropdown(options = ['Violent Crime',
+# ----------------- INTERACTIVE SCATTER PLOT ---------------------
+indicator_dropdown = dcc.Dropdown(options = ['Deprivation Index',
+                                             'Violent Crime',
                                              'Non-Violent Crime', 
                                              'Rent-to-Income Ratio',
                                              'Time to the Loop',
@@ -48,10 +49,10 @@ indicator_dropdown = dcc.Dropdown(options = ['Violent Crime',
                                              ], value = 'Violent Crime',
                                              )
 
-scatter_fig = make_scatter_plot(df, 'Violent Crime')
+scatter_fig = make_scatter_plot(df, 'Deprivation Index')
 
 
-# ----------------- RADAR PLOT ---------------------
+# ----------------- INTERACTIVE RADAR PLOT ---------------------
 zip_dropdown = dcc.Dropdown(options = df['zipcode'].unique(), value = '60601')
 radar_fig = create_radar_graph(df, 60615, 'zipcode')
 
@@ -94,8 +95,8 @@ app.layout = dbc.Container(
             )
         ),
         dbc.Row(dbc.RadioItems(id = 'ind_evic', 
-                               options = ["Evictions per capita", "Deprivation Index"],
-                               value = "Evictions per capita",
+                               options = ["Evictions (2019)", "Deprivation Index"],
+                               value = "Evictions (2019)",
                                inline = True)
         ),
         dbc.Row(
@@ -129,11 +130,11 @@ app.layout = dbc.Container(
                            equivalent and allows them to be compared against each other. Higher values for each indicator indicate \
                            higher levels of deprivation; lower values for each indicator indicate lowers levels of deprivation.",
                             style={"font-size": 16, "text-align": 'left', 'marginTop': 15}),
-                    html.P("Use the drop-down menu to select a zip code to compare to the city average.",
+                    html.P("Use the drop-down menu to select a zip code to compare to the city average:",
                             style={"font-size": 16, "text-align": 'left', 'marginTop': 15}),
                     zip_dropdown,
                     dcc.Graph(id="radar_graph", figure = radar_fig,
-                              style={'width': '60%', "display": "block","margin-left": "auto", 
+                              style={'width': '100%', "display": "block","margin-left": "auto", 
                                      "margin-right": "auto", 'marginTop': 15, 'marginBottom': 10})
                 ])
             )
@@ -146,16 +147,16 @@ app.layout = dbc.Container(
         ),
         dbc.Row(
             dbc.Col(
-                html.P("The scatter plot below compares the distribution of individual indicators which compose the index \
-                       to the distribution of evictions per capita. All indicators are normalized such that their average \
-                       is 0 and their standard deviation is 1. Each dot in the scatter plot represents the values for a zip \
-                       code in Chicago.",
+                html.P("The scatter plot below compares the distribution of the deprivation index to the distribution of evictions. \
+                       Each dot in the scatter plot represents the values for a zip code. Use the drop-down to further compare the  \
+]                       the distribution of the individual indicators which compose the index against evictions All indicators are \
+                       normalized such that their average is 0 and their standard deviation is 1.",
                         style={"font-size": 16, "text-align": 'left', 'marginTop': 15}),
             )
         ),
         dbc.Row(
             dbc.Col(
-                html.P("Select the indicator to compare against per-capita evictions:",
+                html.P("Select the deprivation index or indicator to compare against per-capita evictions:",
                         style={"font-size": 16, "text-align": 'left', 'marginTop': 15}),
             )
         ),
