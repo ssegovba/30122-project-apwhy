@@ -95,8 +95,8 @@ app.layout = dbc.Container(
             )
         ),
         dbc.Row(dbc.RadioItems(id = 'ind_evic', 
-                               options = ["Evictions (2019)", "Deprivation Index"],
-                               value = "Evictions (2019)",
+                               options = ["Evictions per capita", "Deprivation Index"],
+                               value = "Evictions per capita",
                                inline = True)
         ),
         dbc.Row(
@@ -134,10 +134,10 @@ app.layout = dbc.Container(
                             style={"font-size": 16, "text-align": 'left', 'marginTop': 15}),
                     zip_dropdown,
                     dcc.Graph(id="radar_graph", figure = radar_fig,
-                              style={'width': '100%', "display": "block","margin-left": "auto", 
-                                     "margin-right": "auto", 'marginTop': 15, 'marginBottom': 10})
+                              style={'width': '90%', "display": "inline-block", 
+                                     'marginTop': 15, 'marginBottom': 10})
                 ])
-            )
+            ), justify="center"
         ),
         dbc.Row(
             dbc.Col(
