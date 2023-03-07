@@ -7,7 +7,8 @@ import pandas as pd
 import requests
 from random import randint
 from time import sleep
-import os
+import os 
+
 
 API_KEY = os.environ.get('GOOGLE_TOKEN')
 ZIPCODE_PATH = "deprivation_evictions/data_bases/raw_data/bound_zip_codes.geojson"
