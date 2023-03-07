@@ -162,7 +162,7 @@ def clean_db(pull_API_data_bool = True, lat_lon_dict = True):
         merged_db[new_name] = merged_db[c].div(merged_db["total_population"])
     
     #Exporting the database:
-    merged_db.to_csv("clean_database.csv",index=False)
+    merged_db.to_csv(DATA_PATH + "clean_database.csv",index=False)
 
 def mapping_coord_zip(df):
     """
