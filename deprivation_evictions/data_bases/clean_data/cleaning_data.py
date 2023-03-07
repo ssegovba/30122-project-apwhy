@@ -7,7 +7,7 @@ import numpy as np
 import geopy
 import json
 
-DATA_PATH = "../raw_data/"
+DATA_PATH = "deprivation_evictions/data_bases/raw_data/"
 
 def clean_db(lat_lon_dict = True):
     """
