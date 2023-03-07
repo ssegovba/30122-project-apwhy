@@ -21,6 +21,9 @@ def clean_db(pull_API_data_bool = False, lat_lon_dict = True):
     data sources employed.
 
     Input:
+        pull_API_data_bool (boolean): False (default) if we don't want to pull 
+        fresh data from the APIs. True if we do. This step takes about 10 minutes
+
         lat_lon_dict (boolean): True (default) if there is already a dictionary 
             containing a mapping for zipcodes and lat-lon coordinates.
             False to generate that dictionary using helper function.
@@ -227,7 +230,7 @@ def pull_API_data():
     """    
     pull_crime_data(FILTER_YEAR)
     pull_acs_data()
-    update_travel_data()
+    update_travel_data("41.875556,-87.6244014" , 13)
 
 #Includes a call to the function to be able to run it from the command line:
 clean_db()
