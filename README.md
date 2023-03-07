@@ -24,22 +24,22 @@ poetry install
 ```
 poetry shell
 ```
-5. [OPTIONAL] Clean the data -- this will take about 10 minutes
+5. [OPTIONAL] Clean the data -- this will take about 10 minutes.
 ```
 python3 -m deprivation_evictions.data_bases.clean_data.cleaning_data
 ```
-6. Launch the Application
+6. Launch the Application.
 ```
 python3 -m deprivation_evictions
 ```
 
 The IDE may automatically launch a new web browser tab, or may provide a local URL. If the latter, paste it into your browser to view the interactive dashboard.
 
-## For a description of the project:
+## For further information on the project:
 
-### Click here for a summary of the project -- add link when available
+### [Click here for a summary of the project](https://github.com/uchicago-capp122-spring23/30122-project-apwhy/blob/main/proj-paper.pdf)
 
-### Click here for an in-depth description of the methodology -- add link when available
+### [Click here for an in-depth description of the methodology](https://github.com/uchicago-capp122-spring23/30122-project-apwhy/blob/main/Methodology.pdf)
 
 ## Acknowledgments
 
