@@ -19,6 +19,9 @@ def clean_db(pull_API_data_bool = False, lat_lon_dict = True):
     data sources employed.
 
     Input:
+        pull_API_data_bool (boolean): False (default) if we don't want to pull 
+        fresh data from the APIs. True if we do. This step takes about 10 minutes
+
         lat_lon_dict (boolean): True (default) if there is already a dictionary 
             containing a mapping for zipcodes and lat-lon coordinates.
             False to generate that dictionary using helper function.
@@ -219,12 +222,18 @@ def mapping_coord_zip(df):
 
 def pull_API_data(pull_bool = False):
      '''
+     Optional step to pull the raw data from the APIs
+
+     Inputs: pull_bool (boolean): False (default) if we don't want to pull 
+        fresh data from the APIs. True if we do. This step takes about 10 minutes
+
      '''
-    # Optional step to pull the raw data from the APIs
     # NOTE THIS TAKES ABOUT 10 MINUTES
     if pull_bool:
         pull_crime_data(2019)
-        update_travel_data()
+
+        # Use the predetermined inputs for the below step
+        update_travel_data("41.875556,-87.6244014" , 13)
     
 
 
