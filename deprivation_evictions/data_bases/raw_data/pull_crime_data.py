@@ -1,6 +1,7 @@
 # Pull data on crime from the Chicago data API
 # Created by Andrew Dunn
 
+import os
 import pandas as pd
 from sodapy import Socrata
 
@@ -14,7 +15,10 @@ def pull_crime_data(year):
     Returns: None, writes the pulled data as a csv file in the provided path.
     '''
 
-    APP_TOKEN = 'iVwn5D2iqqAipgU9FpV1K1nq7'
+    # The APP_TOKEN is saved in our local environment
+    # To run this code, you will need to get your own API key info 
+    # See this page for more info https://dev.socrata.com/docs/app-tokens.html
+    APP_TOKEN = os.environ.get('APP_TOKEN')
 
     client = Socrata("data.cityofchicago.org", APP_TOKEN)
 
@@ -22,4 +26,4 @@ def pull_crime_data(year):
 
     # Convert to pd DataFrame and export the file
     results_df = pd.DataFrame.from_records(data)
-    results_df.to_csv('data_bases/crime_data.csv')
+    results_df.to_csv('data_bases/raw_data/crime_data.csv')

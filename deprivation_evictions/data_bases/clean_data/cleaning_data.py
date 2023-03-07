@@ -6,6 +6,18 @@ import numpy as np
 import geopy
 import json
 
+# Import the code to pull the data from the APIs
+from data_bases.raw_data.pull_crime_data import pull_crime_data
+from data_bases.raw_data.google_dist import update_travel_data
+
+# Optional step to pull the raw data from the APIs
+# NOTE THIS TAKES ABOUT 10 MINUTES
+pull_raw_data = False
+if pull_raw_data:
+     pull_crime_data(2019)
+     update_travel_data()
+
+
 DATA_PATH = "../raw_data/"
 
 def clean_db(lat_lon_dict = True):
