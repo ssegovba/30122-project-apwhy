@@ -24,7 +24,7 @@ poetry install
 ```
 poetry shell
 ```
-5. [OPTIONAL] Clean the data -- this will take about 10 minutes.
+5. [OPTIONAL] Pull data from API's and clean it -- this will take about 10 minutes.
 ```
 python3 -m deprivation_evictions.data_bases.clean_data.cleaning_data
 ```
