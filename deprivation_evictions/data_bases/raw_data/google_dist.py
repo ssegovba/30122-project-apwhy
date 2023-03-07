@@ -68,7 +68,7 @@ def get_time_distance(origin, DESTINATION):
     time: travel time
     distance: travel distance 
     '''
-    url = f"https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins={origin}&destinations={destination}&key={API_KEY}"
+    url = f"https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins={origin}&destinations={DESTINATION}&key={API_KEY}"
     response = requests.get(url)
     data = response.json()
 
@@ -113,7 +113,4 @@ def update_travel_data(DESTINATION, NUM_ORIGIN):
         sleep(randint(1,4))
 
     points_df.to_csv("./google_distancematrix.csv")
-
-# Includes call to run from command line.
-update_travel_data(DESTINATION, NUM_ORIGIN)
 

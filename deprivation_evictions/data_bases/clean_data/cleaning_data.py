@@ -8,14 +8,14 @@ import geopy
 import json
 
 # Import the code to pull the data from the APIs
-from data_bases.raw_data.pull_crime_data import pull_crime_data
-from data_bases.raw_data.pull_acs_data import pull_acs_data
-from data_bases.raw_data.google_dist import update_travel_data
+from deprivation_evictions.data_bases.raw_data.pull_crime_data import pull_crime_data
+from deprivation_evictions.data_bases.raw_data.pull_acs_data import pull_acs_data
+from deprivation_evictions.data_bases.raw_data.google_dist import update_travel_data
 
-DATA_PATH = "../raw_data/"
+DATA_PATH = "deprivation_evictions/data_bases/raw_data/"
 FILTER_YEAR = 2019
 
-def clean_db(pull_API_data_bool = False, lat_lon_dict = True):
+def clean_db(pull_API_data_bool = True, lat_lon_dict = True):
     """
     Creates a clean database with all the relevant variables from the different
     data sources employed.
@@ -162,7 +162,7 @@ def clean_db(pull_API_data_bool = False, lat_lon_dict = True):
         merged_db[new_name] = merged_db[c].div(merged_db["total_population"])
     
     #Exporting the database:
-    merged_db.to_csv("clean_database.csv",index=False)
+    merged_db.to_csv(DATA_PATH + "clean_database.csv",index=False)
 
 def mapping_coord_zip(df):
     """
