@@ -9,9 +9,11 @@ import json
 
 # Import the code to pull the data from the APIs
 from data_bases.raw_data.pull_crime_data import pull_crime_data
+from data_bases.raw_data.pull_acs_data import pull_acs_data
 from data_bases.raw_data.google_dist import update_travel_data
 
 DATA_PATH = "../raw_data/"
+FILTER_YEAR = 2019
 
 def clean_db(pull_API_data_bool = False, lat_lon_dict = True):
     """
@@ -46,7 +48,8 @@ def clean_db(pull_API_data_bool = False, lat_lon_dict = True):
     zipcodes = pd.DataFrame(data = zip)
 
     # Optionally pull fresh data from the APIs
-    pull_API_data(pull_API_data_bool)
+    if pull_API_data_bool:
+        pull_API_data()
 
     # ACS DATA:
     # Filter by zipcodes from Chicago:
@@ -65,7 +68,7 @@ def clean_db(pull_API_data_bool = False, lat_lon_dict = True):
     rent_data['RegionName'] = rent_data['RegionName'].astype("string")
     rent_data = rent_data.rename(columns={"RegionName":"zip_code"})
     rent_data["Date"] = pd.to_datetime(rent_data["Date"], format = "%Y-%m-%d")
-    rent_data = rent_data[rent_data["Date"].dt.year == 2019]
+    rent_data = rent_data[rent_data["Date"].dt.year == FILTER_YEAR]
 
     # Calculate the mean rent in a zipcode:
     rent_data = rent_data[rent_data["zip_code"].isin(zipcodes["zip_code"])]
@@ -74,7 +77,7 @@ def clean_db(pull_API_data_bool = False, lat_lon_dict = True):
     # EVICTIONS DATA:
     # Filter by year and select specific columns:
     evic_data = pd.read_csv(DATA_PATH + "eviction_data.csv")
-    evic_data = evic_data[evic_data["filing_year"] == 2019]
+    evic_data = evic_data[evic_data["filing_year"] == FILTER_YEAR]
     cols_to_keep = ["filing_year","tract","eviction_filings_completed","back_rent_0",
                     "back_rent_1_to_999","back_rent_1000_to_2499","back_rent_2500_to_4999",
                     "back_rent_5000_or_more","back_rent_median","eviction_order_yes"]
@@ -217,17 +220,14 @@ def mapping_coord_zip(df):
     with open("lat_lon_dict.txt", "w") as fp:
             json.dump(lat_lon_dict, fp)
 
-def pull_API_data(pull_bool = False):
-     '''
-     '''
-    # Optional step to pull the raw data from the APIs
-    # NOTE THIS TAKES ABOUT 10 MINUTES
-    if pull_bool:
-        pull_crime_data(2019)
-        update_travel_data()
-    
-
-
+def pull_API_data():
+    """
+    Helper function to pull the data from the different APIs. The default is
+    False since the process takes approx. 10 minutes.
+    """    
+    pull_crime_data(FILTER_YEAR)
+    pull_acs_data()
+    update_travel_data()
 
 #Includes a call to the function to be able to run it from the command line:
 clean_db()
