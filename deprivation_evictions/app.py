@@ -80,7 +80,7 @@ app.layout = dbc.Container(
                        lack of affordable housing, as displaced tenants may struggle to find another place to live.\
                         This project looks to understand what neighborhood characteristics are associated with evictions in \
                         the city of Chicago. In order to do that, we construct an index to measure neighborhood deprivation, \
-                        using a similar approach as the Multi-dimensional poverty index.",
+                        using a similar approach as the Multi-dimensional Poverty Index.",
                             style={"font-size": 16, "text-align": 'left', 'marginTop': 15})
                 
             )
@@ -91,6 +91,12 @@ app.layout = dbc.Container(
                        1) Safety, described by the per capita amount of violent and non violent crimes; 2) Housing affordability, \
                        measured by the ratio of median rent and income; and 3) Transport accessibility, which looks at the distance \
                        and travel time to the central business district (the Loop).",
+                            style={"font-size": 16, "text-align": 'left'})             
+            )
+        ),
+        dbc.Row(
+            dbc.Col(
+                html.P("Use the buttons to select which data to view in the map:",
                             style={"font-size": 16, "text-align": 'left'})             
             )
         ),
@@ -105,6 +111,12 @@ app.layout = dbc.Container(
         ),
         dbc.Row(html.H3("How does neighborhood deprivation relate to evictions?",
                         style={'marginBottom': 10, 'marginTop': 10}),
+        ),
+        dbc.Row(
+            dbc.Col(
+                html.P("We take both of the maps above and combine them into a singular bivariate map.",
+                            style={"font-size": 16, "text-align": 'left'})             
+            )
         ),
         dbc.Row(
             [
