@@ -23,9 +23,9 @@ thresholds = {
 k = 0
 
 # 3) path to clean data
-cleaned_data = "../data_bases/clean_data/clean_database.csv"
-transport_data = "../data_bases/raw_data/google_distancematrix.csv"
-output_path = "../data_bases/final_data/processed_data.csv"
+cleaned_data = "deprivation_evictions/data_bases/clean_data/clean_database.csv"
+transport_data = "deprivation_evictions/data_bases/raw_data/google_distancematrix.csv"
+output_path = "deprivation_evictions/data_bases/final_data/processed_data.csv"
 
 class MultiDimensionalDeprivation:
     def __init__(self, k, cleaned_data, thresholds):
