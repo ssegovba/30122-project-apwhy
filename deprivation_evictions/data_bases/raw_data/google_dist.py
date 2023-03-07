@@ -7,9 +7,10 @@ import pandas as pd
 import requests
 from random import randint
 from time import sleep
+import os
 
-API_KEY = "INSERT API KEY HERE"
-ZIPCODE_PATH = "INSERT PATH TO SHAPEFILE HERE"
+API_KEY = os.environ.get('GOOGLE_TOKEN')
+ZIPCODE_PATH = "deprivation_evictions/data_bases/raw_data/bound_zip_codes.geojson"
 
 DESTINATION = "41.875556,-87.6244014" # coordinates of the center of "The Loop, Chicago"
 NUM_ORIGIN = 13 # number of random points
