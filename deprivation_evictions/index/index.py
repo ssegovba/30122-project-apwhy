@@ -202,7 +202,8 @@ class MultiDimensionalDeprivation:
                                                                  6,"varimax")))
         )
 
-        return data_extended
+        data_extended.to_csv(output_path)
+        return None
     
 
     ## These additional functions were created as part of the AF methodology ##
@@ -254,3 +255,8 @@ class MultiDimensionalDeprivation:
         deprivation_share = mat_g1.sum().sum() / denominator
 
         return deprivation_share
+    
+    
+# Includes call to run from command line.
+mdpi = MultiDimensionalDeprivation(k, cleaned_data, thresholds)
+mdpi.extend_data()
