@@ -37,9 +37,9 @@ The IDE may automatically launch a new web browser tab, or may provide a local U
 
 ## For further information on the project:
 
-### [Click here for a summary of the project](https://github.com/uchicago-capp122-spring23/30122-project-apwhy/blob/main/proj-paper.pdf)
+[Click here for a summary of the project](https://github.com/uchicago-capp122-spring23/30122-project-apwhy/blob/main/proj-paper.pdf)
 
-### [Click here for an in-depth description of the methodology](https://github.com/uchicago-capp122-spring23/30122-project-apwhy/blob/main/Methodology.pdf)
+[Click here for an in-depth description of the methodology](https://github.com/uchicago-capp122-spring23/30122-project-apwhy/blob/main/Methodology.pdf)
 
 ## Acknowledgments
 
