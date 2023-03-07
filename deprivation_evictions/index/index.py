@@ -23,9 +23,9 @@ thresholds = {
 k = 0
 
 # 3) path to clean data
-cleaned_data = "../data_bases/clean_data/clean_database.csv"
-transport_data = "../data_bases/raw_data/google_distancematrix.csv"
-output_path = "../data_bases/final_data/processed_data.csv"
+cleaned_data = "deprivation_evictions/data_bases/clean_data/clean_database.csv"
+transport_data = "deprivation_evictions/data_bases/raw_data/google_distancematrix.csv"
+output_path = "deprivation_evictions/data_bases/final_data/processed_data.csv"
 
 class MultiDimensionalDeprivation:
     def __init__(self, k, cleaned_data, thresholds):
@@ -202,7 +202,13 @@ class MultiDimensionalDeprivation:
                                                                  6,"varimax")))
         )
 
-        return data_extended
+        # scale g1_sum using min-max scaling
+        g1_sum_min = data_extended['g1_sum'].min()
+        g1_sum_max = data_extended['g1_sum'].max()
+        data_extended['g1_sum_scaled'] = (data_extended['g1_sum'] - g1_sum_min) / (g1_sum_max - g1_sum_min)
+
+        data_extended.to_csv(output_path)
+        return None
     
 
     ## These additional functions were created as part of the AF methodology ##
@@ -254,3 +260,8 @@ class MultiDimensionalDeprivation:
         deprivation_share = mat_g1.sum().sum() / denominator
 
         return deprivation_share
+    
+    
+# Includes call to run from command line.
+mdpi = MultiDimensionalDeprivation(k, cleaned_data, thresholds)
+mdpi.extend_data()
