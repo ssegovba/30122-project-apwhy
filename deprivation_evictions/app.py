@@ -183,9 +183,12 @@ app.layout = dbc.Container(
         ),
         dbc.Row(
             dbc.Col(
-                html.P("For more info on the research, visit the methodology doc at this URL: \
-                       https://github.com/uchicago-capp122-spring23/30122-project-apwhy/blob/main/Methodology.pdf",
-                        style={"font-size": 16, "text-align": 'left', 'marginTop': 15}),
+                # html.P("For more info on the research, visit the methodology doc at this URL:",
+                #         style={"font-size": 16, "text-align": 'left', 'marginTop': 15}),
+                        
+                html.A("For more info on the research, visit the methodology doc",
+                    href = "https://github.com/uchicago-capp122-spring23/30122-project-apwhy/blob/main/Methodology.pdf",
+                    style={"font-size": 16, "text-align": 'left', 'marginTop': 15}),
             )
         ),
     ],
