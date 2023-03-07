@@ -202,6 +202,11 @@ class MultiDimensionalDeprivation:
                                                                  6,"varimax")))
         )
 
+        # scale g1_sum using min-max scaling
+        g1_sum_min = data_extended['g1_sum'].min()
+        g1_sum_max = data_extended['g1_sum'].max()
+        data_extended['g1_sum_scaled'] = (data_extended['g1_sum'] - g1_sum_min) / (g1_sum_max - g1_sum_min)
+
         data_extended.to_csv(output_path)
         return None
     
