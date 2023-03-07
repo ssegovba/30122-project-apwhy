@@ -11,7 +11,10 @@ from time import sleep
 API_KEY = "INSERT API KEY HERE"
 ZIPCODE_PATH = "INSERT PATH TO SHAPEFILE HERE"
 
-def define_origin_coor(num_origin):
+DESTINATION = "41.875556,-87.6244014" # coordinates of the center of "The Loop, Chicago"
+NUM_ORIGIN = 13 # number of random points
+
+def define_origin_coor(NUM_ORIGIN):
     '''
     Opens zipcode shapefile, generates num_origin random coordinates as origin
 
@@ -31,7 +34,7 @@ def define_origin_coor(num_origin):
 
     # Loop through each zipcode and generate n. random coordinates representing origin
     for _, zipcode in zipcodes.iterrows():
-        for _ in range(num_origin):
+        for _ in range(NUM_ORIGIN):
             # If random point is not within zipcode boundary, randomize again
             point = None
             while not point:
@@ -48,7 +51,7 @@ def define_origin_coor(num_origin):
     return points_df
 
 
-def get_time_distance(origin, destination):
+def get_time_distance(origin, DESTINATION):
     '''
     API Call to obtain travel data from Google Distance Matrix API.
 
@@ -77,7 +80,7 @@ def get_time_distance(origin, destination):
 
     return time, distance
 
-def update_travel_data(destination, num_origin):
+def update_travel_data(DESTINATION, NUM_ORIGIN):
     '''
     Updates each observation in pandas df for destination (CBD)
 
@@ -87,7 +90,7 @@ def update_travel_data(destination, num_origin):
     Function:
     Appends travel data (time_to_cbd, distance_to_cbd) into the Pandas dataframe
     ''' 
-    points_df = define_origin_coor(num_origin)
+    points_df = define_origin_coor(NUM_ORIGIN)
 
     points_df['time_to_CBD'] = None
     points_df['distance_to_CBD'] = None
@@ -97,10 +100,10 @@ def update_travel_data(destination, num_origin):
         while True:
             # Added try-except to handle errors when requesting
             try:
-                time, distance = get_time_distance(origin, destination)
+                time, distance = get_time_distance(origin, DESTINATION)
                 break
             except ValueError:
-                points_df = define_origin_coor(num_origin)
+                points_df = define_origin_coor(NUM_ORIGIN)
                 row = points_df.iloc[i]
                 origin = f"{row['latitude']},{row['longitude']}"
         points_df.at[i, 'time_to_CBD'] = time
@@ -109,5 +112,6 @@ def update_travel_data(destination, num_origin):
 
     points_df.to_csv("./google_distancematrix.csv")
 
-
+# Includes call to run from command line.
+update_travel_data(DESTINATION, NUM_ORIGIN)
 

@@ -1,4 +1,5 @@
 # Code written by Santiago Segovia
+# Lines 76-85 written by Gregory Ho
 
 import pandas as pd
 import geopandas as gpd
@@ -208,3 +209,6 @@ def mapping_coord_zip(df):
                 lat_lon_dict = json.load(fp)
     with open("lat_lon_dict.txt", "w") as fp:
             json.dump(lat_lon_dict, fp)
+
+#Includes a call to the function to be able to run it from the command line:
+clean_db()
