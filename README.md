@@ -24,7 +24,11 @@ poetry install
 ```
 poetry shell
 ```
-5. Launch the Application
+5. [OPTIONAL] Clean the data -- this will take about 10 minutes
+```
+python3 -m deprivation_evictions.data_bases.clean_data.cleaning_data
+```
+6. Launch the Application
 ```
 python3 -m deprivation_evictions
 ```
@@ -36,3 +40,16 @@ The IDE may automatically launch a new web browser tab, or may provide a local U
 ### Click here for a summary of the project -- add link when available
 
 ### Click here for an in-depth description of the methodology -- add link when available
+
+## Acknowledgments
+
+Professor: James Turk
+
+Teaching Assistant: Norah Griffin
+
+Data Sources:
+- American Community Survey
+- Google Maps API
+- Chicago Data Portal
+- Zillow Real Estate Metrics API
+- Law Center for Better Housing Eviction Data for the city of Chicago

@@ -7,9 +7,13 @@ import numpy as np
 import geopy
 import json
 
-DATA_PATH = "deprivation_evictions/data_bases/raw_data/"
+# Import the code to pull the data from the APIs
+from data_bases.raw_data.pull_crime_data import pull_crime_data
+from data_bases.raw_data.google_dist import update_travel_data
 
-def clean_db(lat_lon_dict = True):
+DATA_PATH = "../raw_data/"
+
+def clean_db(pull_API_data_bool = False, lat_lon_dict = True):
     """
     Creates a clean database with all the relevant variables from the different
     data sources employed.
@@ -40,6 +44,9 @@ def clean_db(lat_lon_dict = True):
                         '60657', '60659', '60660', '60661',
                         '60707', '60827']} #Removed 60666 (O'Hare)
     zipcodes = pd.DataFrame(data = zip)
+
+    # Optionally pull fresh data from the APIs
+    pull_API_data(pull_API_data_bool)
 
     # ACS DATA:
     # Filter by zipcodes from Chicago:
@@ -209,6 +216,18 @@ def mapping_coord_zip(df):
                 lat_lon_dict = json.load(fp)
     with open("lat_lon_dict.txt", "w") as fp:
             json.dump(lat_lon_dict, fp)
+
+def pull_API_data(pull_bool = False):
+     '''
+     '''
+    # Optional step to pull the raw data from the APIs
+    # NOTE THIS TAKES ABOUT 10 MINUTES
+    if pull_bool:
+        pull_crime_data(2019)
+        update_travel_data()
+    
+
+
 
 #Includes a call to the function to be able to run it from the command line:
 clean_db()
