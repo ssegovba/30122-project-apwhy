@@ -73,8 +73,6 @@ def get_time_distance(origin, DESTINATION):
     url = f"https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins={origin}&destinations={DESTINATION}&key={API_KEY}"
     response = requests.get(url)
     data = response.json()
-    print(url)
-    print(data)
     #Key Error Handling: If API returns nothing, 
     #record time, distance as 0 representing missing values
     try:
@@ -100,12 +98,10 @@ def update_travel_data(DESTINATION, NUM_ORIGIN):
 
     points_df['time_to_CBD'] = None
     points_df['distance_to_CBD'] = None
-
     
     for i, row in points_df.iterrows():
         origin = f"{row['latitude']},{row['longitude']}"
         time, distance = get_time_distance(origin, DESTINATION)
-        print(origin,time, distance)
         points_df.at[i, 'time_to_CBD'] = time
         points_df.at[i, 'distance_to_CBD'] = distance
         sleep(randint(1,4))
