@@ -78,7 +78,7 @@ def get_time_distance(origin, DESTINATION):
     try:
         time = data['rows'][0]['elements'][0]['duration']['value']
         distance = data['rows'][0]['elements'][0]['distance']['value']
-    except KeyError:
+    except IndexError:
         time, distance = 0, 0
 
     return time, distance
