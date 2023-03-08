@@ -7,10 +7,11 @@ import pandas as pd
 import requests
 from random import randint
 from time import sleep
-import os 
 
+# From a non-public doc of API keys
+from ...constants import GOOGLE_TOKEN
 
-API_KEY = os.environ.get('GOOGLE_TOKEN')
+API_KEY = GOOGLE_TOKEN
 ZIPCODE_PATH = "deprivation_evictions/data_bases/raw_data/bound_zip_codes.geojson"
 
 DESTINATION = "41.875556,-87.6244014" # coordinates of the center of "The Loop, Chicago"
@@ -108,5 +109,5 @@ def update_travel_data(DESTINATION, NUM_ORIGIN):
         points_df.at[i, 'distance_to_CBD'] = distance
         sleep(randint(1,4))
 
-    points_df.to_csv("deprivation_evictions/data_bases/google_distancematrix.csv")
+    points_df.to_csv("deprivation_evictions/data_bases/raw_data/google_distancematrix.csv")
 

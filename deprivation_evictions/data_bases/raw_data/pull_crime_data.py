@@ -1,9 +1,12 @@
 # Pull data on crime from the Chicago data API
 # Created by Andrew Dunn
 
-import os
 import pandas as pd
 from sodapy import Socrata
+
+# From a non-public doc of API keys
+from ...constants import API_TOKEN
+
 
 def pull_crime_data(year):
     '''
@@ -18,9 +21,7 @@ def pull_crime_data(year):
     # The APP_TOKEN is saved in our local environment
     # To run this code, you will need to get your own API key info 
     # See this page for more info https://dev.socrata.com/docs/app-tokens.html
-    APP_TOKEN = os.environ.get('APP_TOKEN')
-
-    client = Socrata("data.cityofchicago.org", APP_TOKEN)
+    client = Socrata("data.cityofchicago.org", API_TOKEN)
 
     data = client.get("ijzp-q8t2", select = '*', where = 'Year = ' + str(year), limit = 1000000)
 
