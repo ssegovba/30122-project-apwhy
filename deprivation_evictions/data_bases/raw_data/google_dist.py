@@ -10,7 +10,7 @@ from time import sleep
 import os 
 
 
-API_KEY = os.environ.get('GOOGLE_TOKEN')
+API_KEY = os.environ['GOOGLE_TOKEN']
 ZIPCODE_PATH = "deprivation_evictions/data_bases/raw_data/bound_zip_codes.geojson"
 
 DESTINATION = "41.875556,-87.6244014" # coordinates of the center of "The Loop, Chicago"
