@@ -25,6 +25,7 @@ poetry install
 poetry shell
 ```
 5. [OPTIONAL] Pull data from API's and clean it -- this will take about 10 minutes.
+Note that two of the API's need a key for access. Please request it to any of the team members.
 ```
 python3 -m deprivation_evictions.data_bases.clean_data.cleaning_data
 ```
