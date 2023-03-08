@@ -11,24 +11,32 @@ from time import sleep
 # From a non-public doc of API keys
 from ...constants import GOOGLE_TOKEN
 
+#Google token for calling its API
 API_KEY = GOOGLE_TOKEN
+
+#Path to Geojson file, from which zip code boundaries are stored
 ZIPCODE_PATH = "deprivation_evictions/data_bases/raw_data/bound_zip_codes.geojson"
 
 DESTINATION = "41.875556,-87.6244014" # coordinates of the center of "The Loop, Chicago"
 NUM_ORIGIN = 13 # number of random points
+SEED = 20220224
 
 def define_origin_coor(NUM_ORIGIN):
     '''
-    Opens zipcode shapefile, generates num_origin random coordinates as origin
+    Opens zipcode shapefile, generates 'num_origin' random coordinates as origin
+    points. As zip code boundaries come in different sizes, it is more appropriate 
+    to use a set of random coordinates to generate more representative travel 
+    statistics.
+
+    Helper function: 
+    --used in update_travel_data
 
     Inputs: 
-    zipcode_path: Geojson Shapefile (path)
-    num_origin: number of origin points in a zipcode boundary
+    NUM_ORIGIN: number of random origin points in a zipcode boundary
 
     Function:
     Appends (zipcode, latitude, longitude) into a Pandas dataframe
     '''
-
     # Open geojson shapefile
     zipcodes = gpd.read_file(ZIPCODE_PATH)
 
@@ -63,18 +71,18 @@ def get_time_distance(origin, DESTINATION):
 
     Inputs: 
     origin: starting coordinates
-    destination: ending coordinates
+    DESTINATION: ending coordinates
 
     Returns:
     time: travel time
     distance: travel distance 
     '''
-
     url = f"https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins={origin}&destinations={DESTINATION}&key={API_KEY}"
     response = requests.get(url)
     data = response.json()
-    #Key Error Handling: If API returns nothing, 
-    #record time, distance as 0 representing missing values
+
+    # Key Error Handling: If API returns nothing, 
+    # record time, distance as 0 representing missing values
     try:
         time = data['rows'][0]['elements'][0]['duration']['value']
         distance = data['rows'][0]['elements'][0]['distance']['value']
@@ -85,15 +93,15 @@ def get_time_distance(origin, DESTINATION):
 
 def update_travel_data(DESTINATION, NUM_ORIGIN):
     '''
-    Updates each observation in pandas df for destination (CBD)
+    Updates each observation in pandas df for DESTINATION (CBD)
 
     Inputs: 
-    destination: destination either in text, or in (lat, lng)
+    DESTINATION: destination either in text, or in (lat, lng)
 
     Function:
     Appends travel data (time_to_cbd, distance_to_cbd) into the Pandas dataframe
     '''
-    random.seed(20220224)
+    random.seed(SEED)
     points_df = define_origin_coor(NUM_ORIGIN)
 
     points_df['time_to_CBD'] = None
