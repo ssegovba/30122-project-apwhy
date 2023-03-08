@@ -26,4 +26,4 @@ def pull_crime_data(year):
 
     # Convert to pd DataFrame and export the file
     results_df = pd.DataFrame.from_records(data)
-    results_df.to_csv('data_bases/raw_data/crime_data.csv')
+    results_df.to_csv('deprivation_evictions/data_bases/raw_data/crime_data.csv')

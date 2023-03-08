@@ -42,4 +42,4 @@ def pull_acs_data():
                         'pop_white', 'pop_black', 'pop_native',
                         'pop_asian', 'pop_latino', 'zip_code']
 
-    acs_var.to_csv('data_bases/acs_data.csv')
+    acs_var.to_csv('deprivation_evictions/data_bases/acs_data.csv')

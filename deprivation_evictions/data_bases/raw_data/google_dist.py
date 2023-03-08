@@ -112,5 +112,5 @@ def update_travel_data(DESTINATION, NUM_ORIGIN):
         points_df.at[i, 'distance_to_CBD'] = distance
         sleep(randint(1,4))
 
-    points_df.to_csv("./google_distancematrix.csv")
+    points_df.to_csv("deprivation_evictions/data_bases/google_distancematrix.csv")
 
