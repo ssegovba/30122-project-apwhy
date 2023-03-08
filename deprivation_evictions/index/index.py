@@ -1,4 +1,4 @@
-# Constructing a deprivation index following the AF method
+# Constructing a deprivation index following the AF methodology
 # Created by Gregory Ho
 
 import pandas as pd
@@ -27,6 +27,11 @@ cleaned_data = "deprivation_evictions/data_bases/clean_data/clean_database.csv"
 transport_data = "deprivation_evictions/data_bases/raw_data/google_distancematrix.csv"
 output_path = "deprivation_evictions/data_bases/final_data/processed_data.csv"
 
+# 4) PCA parameters (This segment is for further analysis, unutilized in our viz)
+n_comp = 5
+rotate_fn = "varimax"
+
+
 class MultiDimensionalDeprivation:
     def __init__(self, k, cleaned_data, thresholds):
         '''
@@ -42,7 +47,7 @@ class MultiDimensionalDeprivation:
         This function takes in cleaned data and performs some row operations to 
         compute intermediate values
         Inputs:
-        cleaned_data    : takes in cleaned processed data
+        cleaned_data    : takes in cleaned data
 
         Returns:
         extended_data   : processed data in the form of a pandas dataframe
@@ -84,11 +89,12 @@ class MultiDimensionalDeprivation:
         in d dimensions (columns)
         Inputs:
         cleaned_data    : takes in cleaned processed data
-        k               : fixed cutoff in AF method
+        k               : fixed cutoff in AF method 
         
         Returns deprivation scores as a pandas dataframe
         '''
         merged_data = self.compute_ratios()
+
         #Generate binary matrix y
         mat_y = pd.DataFrame(index=merged_data.index, columns=self.indicators)
         merged_data['deprivation_share'] = 0
@@ -96,8 +102,8 @@ class MultiDimensionalDeprivation:
             mat_y[ind] = (merged_data[ind] >= self.thresholds[ind]).astype(int)
             merged_data['deprivation_share'] += mat_y[ind]
 
-        # for all zipcodes that has less than k deprivations assign all elements to
-        # be 0
+        # for all zipcodes that has less than k deprivations assign all 
+        # elements to be 0 (following AF methodology)
         mat_y[merged_data['deprivation_share'] <= self.k] = 0
         
         return mat_y
@@ -115,7 +121,8 @@ class MultiDimensionalDeprivation:
         merged_data = self.compute_ratios()
         mat_y = self.deprivation_matrix()
         
-        # Compute the normalized gap
+        # Compute the normalized gap - each element is expressed in their respective
+        # distance from the deprivation vector (threshold)
         mat_g1 = pd.DataFrame(index=merged_data.index, columns=self.indicators)
         for ind in self.indicators:
             mat_g1[ind] = (merged_data[ind] - self.thresholds[ind]) / self.thresholds[ind]
@@ -131,14 +138,14 @@ class MultiDimensionalDeprivation:
         return mat_g1
 
 
-    def pca_weights(self, matrix, n_comp=6, rotate_fn='oblimin'):
+    def pca_weights(self, matrix, n_comp, rotate_fn):
         '''
-        Performs PCA to express deprivation weights in terms of their 
-        var-covar matrix
+        Performs PCA to express deprivation weights as linear combinations of the
+        eigenvectors of the variance-covariance matrix.
 
         Input: Any Matrix g0, g1, ..., gn (depending on objective of analysis)
-        n_comp equivalent to num of dimensions (default=6, when index expands, 
-        this parameter is set based on scree plot and factor loadings)
+        n_comp equivalent to num of dimensions (default=5 (num dimensions), but 
+        this parameter is should be set based on scree plot and Kaiser criterion)
         rotate_fn - function for factor rotations (generally: oblimin or varimax)
         Returns: PCA or Factor weights
         '''
@@ -158,7 +165,9 @@ class MultiDimensionalDeprivation:
         # Factor analysis - Express factors as rotations
         fa = FactorAnalyzer(n_factors=n_comp, rotation= rotate_fn)
         fa.fit(matrix)
-        print(pd.DataFrame(fa.get_communalities(),index=matrix.columns,columns=['Communalities']))
+        print(pd.DataFrame(fa.get_communalities(), 
+                           index=matrix.columns, 
+                           columns=['Communalities']))
 
         # Express weights as factor loadings
         weights = fa.loadings_
@@ -193,13 +202,17 @@ class MultiDimensionalDeprivation:
         return output_df
 
     def extend_data(self):
+        '''
+        This function extends the processed dataset with the dimensions needed
+        to produce our visualizations.
+        '''
         data_extended = (
             self.compute_ratios()
             .join(self.raw_normalized_viz().add_suffix('_norm'))
             .join(self.normalized_gap().add_suffix('_g1').assign(g1_sum=lambda x: x.sum(axis=1)))
             .join(self.weighted_deprivation_inx(self.normalized_gap(), 
                                                 self.pca_weights(self.normalized_gap(),
-                                                                 6,"varimax")))
+                                                                 n_comp, rotate_fn)))
         )
 
         # scale g1_sum using min-max scaling
