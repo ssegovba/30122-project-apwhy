@@ -31,12 +31,12 @@ If you have your own API tokens, navigate to deprivation_evictions, create a con
 cd deprivation_evictions
 code constants.py
 ```
-5b. and paste your API keys in constants.py as follows:
+ 5b. and paste your API keys in constants.py as follows:
 ```
 GOOGLE_TOKEN = "Your_Google_Token_Here"
 API_TOKEN = "Your_Chicago_Data_Portal_Token_Here"
 ```
-5c. Then, navigate back to the repository and run the following to pull data from the API's and clean it.
+ 5c. Then, navigate back to the repository and run the following to pull data from the API's and clean it.
 ```
 cd ./30122-project-apwhy
 python3 -m deprivation_evictions.data_bases.clean_data.cleaning_data
