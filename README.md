@@ -25,7 +25,7 @@ poetry install
 poetry shell
 ```
 5. [OPTIONAL] Pull data from API's and clean it -- this will take about 10 minutes.
-Note that two of the API's need a key for access. Please request it to any of the team members.
+Note that two of the API's need keys to access. We recommend requesting API keys from the Chicago Data Portal and Google Maps API to complete this step.
 ```
 python3 -m deprivation_evictions.data_bases.clean_data.cleaning_data
 ```

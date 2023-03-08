@@ -73,7 +73,8 @@ def get_time_distance(origin, DESTINATION):
     url = f"https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins={origin}&destinations={DESTINATION}&key={API_KEY}"
     response = requests.get(url)
     data = response.json()
-
+    print(url)
+    print(data)
     #Key Error Handling: If API returns nothing, 
     #record time, distance as 0 representing missing values
     try:
