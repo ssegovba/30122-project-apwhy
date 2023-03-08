@@ -68,6 +68,7 @@ def get_time_distance(origin, DESTINATION):
     time: travel time
     distance: travel distance 
     '''
+
     url = f"https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins={origin}&destinations={DESTINATION}&key={API_KEY}"
     response = requests.get(url)
     data = response.json()
@@ -91,23 +92,18 @@ def update_travel_data(DESTINATION, NUM_ORIGIN):
 
     Function:
     Appends travel data (time_to_cbd, distance_to_cbd) into the Pandas dataframe
-    ''' 
+    '''
+    random.seed(20220224)
     points_df = define_origin_coor(NUM_ORIGIN)
 
     points_df['time_to_CBD'] = None
     points_df['distance_to_CBD'] = None
 
+    
     for i, row in points_df.iterrows():
         origin = f"{row['latitude']},{row['longitude']}"
-        while True:
-            # Added try-except to handle errors when requesting
-            try:
-                time, distance = get_time_distance(origin, DESTINATION)
-                break
-            except ValueError:
-                points_df = define_origin_coor(NUM_ORIGIN)
-                row = points_df.iloc[i]
-                origin = f"{row['latitude']},{row['longitude']}"
+        time, distance = get_time_distance(origin, DESTINATION)
+        print(origin,time, distance)
         points_df.at[i, 'time_to_CBD'] = time
         points_df.at[i, 'distance_to_CBD'] = distance
         sleep(randint(1,4))
