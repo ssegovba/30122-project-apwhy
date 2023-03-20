@@ -1,9 +1,6 @@
 # Creates a radar graph to compare kay variables of a zip code against the mean
 # Written by Andrew Dunn
 
-import pandas as pd
-from dash import Dash, dcc, html
-import plotly.express as px
 import plotly.graph_objects as go
 
 def create_radar_graph(df, zip_code, zipcode_col_name):
@@ -27,19 +24,19 @@ def create_radar_graph(df, zip_code, zipcode_col_name):
 
     for index, rows in df.iterrows():
         zip_dict[index] = [rows.violent_crime_norm,
-                           rows.non_offensive_crime_norm, rows.RTI_ratio_norm, 
+                           rows.non_offensive_crime_norm, rows.RTI_ratio_norm,
                            rows.time_to_CBD_norm, rows.distance_to_CBD_norm]
 
     # Define the data labels, in order
-    categories = ['Violent Crime', 'Non-Violent Crime', 
+    categories = ['Violent Crime', 'Non-Violent Crime',
                   'Rent-to-Income Ratio', 'Time to Loop', 'Distance to Loop']
 
-    fig = go.Figure()   
+    fig = go.Figure()
 
     # Graph the city averages
     fig.add_trace(go.Scatterpolar(
-        r = [df['violent_crime_norm'].mean(axis=0), 
-                df['non_offensive_crime_norm'].mean(axis=0), 
+        r = [df['violent_crime_norm'].mean(axis=0),
+                df['non_offensive_crime_norm'].mean(axis=0),
                 df['RTI_ratio_norm'].mean(axis=0),
                 df['time_to_CBD_norm'].mean(axis=0),
                 df['distance_to_CBD_norm'].mean(axis=0)],
@@ -60,14 +57,12 @@ def create_radar_graph(df, zip_code, zipcode_col_name):
         line_color = 'rgb(28, 72, 93)'
     ))
 
-    # Get maximum value for the different axes
-
-    indicators = ['violent_crime_norm', 
-                'non_offensive_crime_norm', 'RTI_ratio_norm', 
+    indicators = ['violent_crime_norm',
+                'non_offensive_crime_norm', 'RTI_ratio_norm',
                 'time_to_CBD_norm', 'distance_to_CBD_norm']
     
+    # Get maximum and minimum values for the different axes
     maxes = df[indicators].max(axis=0)
-    
     mins = df[indicators].min(axis=0)
 
     # Add ranges to the graph
