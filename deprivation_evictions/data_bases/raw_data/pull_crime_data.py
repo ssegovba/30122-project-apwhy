@@ -19,7 +19,7 @@ def pull_crime_data(year):
     '''
 
     # The APP_TOKEN is saved in our local environment
-    # To run this code, you will need to get your own API key info 
+    # To run this code, you will need to get your own API key info
     # See this page for more info https://dev.socrata.com/docs/app-tokens.html
     client = Socrata("data.cityofchicago.org", API_TOKEN)
 
