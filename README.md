@@ -4,7 +4,7 @@
 [Andrew Dunn](https://github.com/andrewjtdunn), [Gregory Ho](https://github.com/GregoryHo88), [Santiago Segovia](https://github.com/ssegovba), [Stephania Tello Zamudio](https://github.com/stephatz)
 
 ## Project Summary
-This project conducts data analysis to understand the relationship between a deprivation index, constructed using socioeconomic data from a variety of sources, and instances of eviction in the city of Chicago. The python application creates an interactive dashboard which summarizes the relationship betwen the the different factors. Follow the steps below to launch the dashboard.
+This project conducts data analysis to understand the relationship between a deprivation index, constructed using socioeconomic data from a variety of sources, and instances of eviction in the city of Chicago. The python application creates an interactive dashboard which summarizes the relationship between the different factors. Follow the steps below to launch the dashboard.
 
 ## To Launch the Application
 
