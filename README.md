@@ -16,7 +16,7 @@ git clone https://github.com/uchicago-capp122-spring23/30122-project-apwhy
 ```
 cd ./30122-project-apwhy
 ```
-3. Install Poetry, which will allow the user to run the application in a virtual environment.
+3. Download Poetry, which allows the user to run the application in a virtual environment, [following these instructions](https://python-poetry.org/docs/). Then install poetry.
 ```
 poetry install
 ```
